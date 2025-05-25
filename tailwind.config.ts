@@ -7,12 +7,21 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  theme: {
-  	extend: {
+  theme: {  	extend: {
   		backgroundImage: {
   			'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
   			'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
   		},
+      animation: {
+        'progress': 'progressAnimation 2s ease-in-out infinite',
+      },
+      keyframes: {
+        progressAnimation: {
+          '0%': { width: '0%' },
+          '50%': { width: '70%' },
+          '100%': { width: '95%' }
+        },
+      },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

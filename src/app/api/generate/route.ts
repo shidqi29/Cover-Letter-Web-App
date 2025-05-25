@@ -179,21 +179,50 @@ Please ensure the cover letter:
 
 Important: Make sure to extract and use the specific company name, job title, and any other unique details from the job poster to create a truly personalized cover letter.`
       }
-    ];
+    ];    console.log('Sending request to OpenAI with messages:', JSON.stringify(messages, null, 2));
 
-    console.log('Sending request to OpenAI with messages:', JSON.stringify(messages, null, 2));
+    // Create a new ReadableStream for streaming the response
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          const stream = await openai.chat.completions.create({
+            model: 'o4-mini',
+            messages,
+            stream: true,
+          });
 
-    const response = await openai.chat.completions.create({
-      model: 'o4-mini',
-      messages,
+          // Process the stream chunks
+          for await (const chunk of stream) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            if (content) {
+              // Encode and send the chunk
+              const encoder = new TextEncoder();
+              controller.enqueue(encoder.encode(content));
+            }
+          }
+          controller.close();
+        } catch (error) {
+          console.error('Stream error:', error);
+          controller.error(error);
+        }
+      }
     });
 
-    return NextResponse.json({ coverLetter: response.choices[0].message.content });
+    // Return the stream as the response
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
   } catch (error) {
     console.error('Error in generate API:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to generate cover letter' },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ 
+      error: error instanceof Error ? error.message : 'Failed to generate cover letter' 
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 } 
