@@ -101,7 +101,7 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
       doc.line(0, 40, pageWidth, 40);
 
       // Add title in header
-      doc.setFont("helvetica", "bold");
+      doc.setFont("Times New Roman", "bold");
       doc.setFontSize(22);
       doc.setTextColor(50, 50, 50); // dark gray text
       doc.text("PROFESSIONAL COVER LETTER", pageWidth / 2, 25, {
@@ -115,7 +115,7 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
       doc.text(dateText, pageWidth - margin - 2, margin + 35);
 
       // Add content
-      doc.setFont("helvetica", "normal");
+      doc.setFont("Times New Roman", "normal");
       doc.setFontSize(12);
       doc.setTextColor(0, 0, 0); // black text
 
@@ -129,7 +129,7 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
           // Apply different formatting to the salutation and signature
           if (index === 0 && para.toLowerCase().includes("dear")) {
             // Salutation
-            doc.setFont("helvetica", "normal");
+            doc.setFont("Times New Roman", "normal");
           } else if (
             index === paragraphs.length - 1 &&
             (para.toLowerCase().includes("sincerely") ||
@@ -137,10 +137,10 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
               para.toLowerCase().includes("thank you"))
           ) {
             // Signature
-            doc.setFont("helvetica", "normal");
+            doc.setFont("Times New Roman", "normal");
           } else {
             // Regular paragraph
-            doc.setFont("helvetica", "normal");
+            doc.setFont("Times New Roman", "normal");
           }
 
           // Split paragraph into lines to fit width
