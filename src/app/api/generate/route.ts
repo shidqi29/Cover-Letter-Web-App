@@ -46,9 +46,6 @@ async function extractTextFromImage(imageBuffer: ArrayBuffer): Promise<string> {
   }
 }
 
-import axios from 'axios';
-import * as cheerio from 'cheerio';
-
 async function extractTextFromJobLink(url: string): Promise<string> {
   try {
     console.log('Extracting job details from URL:', url);
@@ -56,168 +53,79 @@ async function extractTextFromJobLink(url: string): Promise<string> {
     // Normalize the URL by adding https:// if missing
     const normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
     
+    // Use OpenAI with web search capabilities to directly access and extract job information
+    const prompt = `
+    Please use your web browsing capabilities to access the following job posting URL and extract all relevant information from the actual webpage content. I need you to visit the page and extract:
+
+    1. Company name
+    2. Job title
+    3. Job description
+    4. Requirements and qualifications
+    5. Responsibilities
+    6. Benefits (if available)
+    7. Location
+    8. Job type (full-time, part-time, etc.)
+    9. Any other relevant job-related information
+
+    Please browse to this URL and extract the actual content from the job posting page:
+    ${normalizedUrl}
+
+    Format the extracted information in a clear, structured way that can be used to create a personalized cover letter. If the page doesn't contain a job posting, please indicate that as well.
+    `;
+    
     try {
-      // Fetch HTML content from the job posting URL
-      const response = await axios.get(normalizedUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.5',
-          'Accept-Encoding': 'gzip, deflate, br'
-        },
-        timeout: 10000 // 10 seconds timeout
-      });
-      
-      const html = response.data;
-      
-      if (!html || typeof html !== 'string') {
-        console.error('Invalid HTML content received');
-        throw new Error('Failed to retrieve valid content from the job link');
-      }
-        // First, check if the content is likely a job posting and assess its quality
-      const jobDetectionPrompt = `
-      Analyze this HTML content carefully and determine:
-      
-      1. Is this a job posting/description? 
-         - Return "YES" if it's definitely a job posting with job requirements, responsibilities, etc.
-         - Return "MAYBE" if it might be related to a job but doesn't have detailed information.
-         - Return "NO" if it's definitely not a job posting (e.g., a homepage, blog post, product page, etc.)
-      
-      2. If it is or might be a job posting, assess its quality on a scale of 0-100:
-         - 90-100: Complete job posting with detailed requirements, responsibilities, qualifications, company info, etc.
-         - 70-89: Good job posting with most key details
-         - 40-69: Basic job posting with some information but missing important details
-         - 1-39: Poor quality with minimal job-related information
-         - 0: Not a job posting at all
-      
-      3. Identify any missing key information:
-         - List any critical job posting elements that are missing (requirements, responsibilities, etc.)
-      
-      Format your response exactly like this:
-      STATUS: [YES/MAYBE/NO]
-      QUALITY: [0-100]
-      MISSING: [list of missing elements, comma separated]
-      
-      HTML Content (excerpt):
-      ${html.substring(0, 5000)}
-      `;
-      
-      const jobDetectionResponse = await openai.chat.completions.create({
-        model: "o4-mini",
-        messages: [{ role: "user", content: jobDetectionPrompt }],
-      });
-      
-      const detectionResult = jobDetectionResponse.choices[0].message.content?.trim() || "";
-      console.log('Job detection result:', detectionResult);
-      
-      // Parse the detection result
-      const statusMatch = detectionResult.match(/STATUS:\s*(YES|MAYBE|NO)/i);
-      const qualityMatch = detectionResult.match(/QUALITY:\s*(\d+)/i);
-      const missingMatch = detectionResult.match(/MISSING:\s*(.+)$/im);
-      
-      const isJobPosting = statusMatch ? statusMatch[1].toUpperCase() : "NO";
-      const jobQuality = qualityMatch ? parseInt(qualityMatch[1]) : 0;
-      const missingElements = missingMatch ? missingMatch[1].trim() : "complete information";
-      
-      console.log(`Job detection: Status=${isJobPosting}, Quality=${jobQuality}, Missing=${missingElements}`);
-      
-      if (isJobPosting === "NO") {
-        return `This URL does not appear to contain job posting information. Please provide a URL that leads directly to a job description with requirements and responsibilities. The system will create a cover letter based on your CV and generic job information.`;
-      }
-      
-      // For low-quality job postings, add a note about limitations
-      let qualityNote = "";
-      if (jobQuality < 40 && isJobPosting !== "NO") {
-        qualityNote = `Note: The job information from this URL appears to be limited. The cover letter will be created with the available information, but it may be less specific than if a complete job description was provided. Missing information: ${missingElements}.`;
-      }
-      
-      // Use OpenAI to extract and structure the job information
-      const prompt = `
-      Extract and structure the job information from this HTML content. 
-      Focus on:
-      1. Company name
-      2. Job title
-      3. Job description
-      4. Requirements and qualifications
-      5. Responsibilities
-      6. Benefits (if available)
-      7. Location
-      8. Job type (full-time, part-time, etc.)
-      
-      ${isJobPosting === "MAYBE" ? "Since this might not be a complete job posting, extract whatever relevant information is available and indicate what's missing." : "Present the information in a clear, structured format."}
-      
-      HTML Content:
-      ${html.substring(0, 15000)} // Limit to avoid token limits
-      `;
-      
-      const response2 = await openai.chat.completions.create({
-        model: "o4-mini",
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-search-preview",
         messages: [
           {
             role: "user",
             content: prompt
           }
-        ],
-      });      const extractedText = response2.choices[0].message.content;
-      console.log('Extracted job information:', extractedText);
-      
-      if (isJobPosting === "MAYBE") {
-        return `Note: This URL might not contain complete job posting information. Here's what could be extracted:\n\n${extractedText || 'No job information could be extracted from the provided link.'}`;
-      }
-      
-      // Add the quality note if needed
-      if (qualityNote) {
-        return `${qualityNote}\n\n${extractedText || 'Limited job information could be extracted from the provided link.'}`;
-      }
-      
-      return extractedText || 'No job information could be extracted from the provided link.';
-    } catch (fetchError) {
-      console.error('Error fetching from URL:', fetchError);
-      
-      // Try a different approach with just the domain and path analysis if direct fetch fails
-      console.log('Attempting alternative extraction approach...');
-      
-      // Extract domain and analyze URL pattern to identify job source
-      const urlObj = new URL(normalizedUrl);
-      const domain = urlObj.hostname;
-      const path = urlObj.pathname;
-      
-      // Check if the path contains job-related keywords
-      const jobKeywords = ['job', 'career', 'position', 'opening', 'vacancy', 'apply', 'employment'];
-      const pathHasJobKeyword = jobKeywords.some(keyword => path.toLowerCase().includes(keyword));
-      
-      let promptContent = `I'm trying to extract job information from a URL but cannot access the content directly.`;
-      
-      if (pathHasJobKeyword) {
-        promptContent += `
-        The URL path suggests this might be a job posting page.
-        Based on the URL structure, please provide a generic template for what information might be expected from this job source.
-        URL: ${normalizedUrl}
-        Domain: ${domain}
-        Path: ${path}
-        
-        Please generate a structured placeholder with common job posting elements that would help a user craft a cover letter, noting that this is based on the URL pattern only, not the actual content.`;
-      } else {
-        promptContent += `
-        The URL doesn't appear to contain obvious job-related keywords.
-        URL: ${normalizedUrl}
-        Domain: ${domain}
-        Path: ${path}
-        
-        Please generate a brief note explaining that this doesn't appear to be a job posting URL, and provide a generic job posting structure that could be used as a placeholder.`;
-      }
-      
-      const response3 = await openai.chat.completions.create({
-        model: "o4-mini",
-        messages: [
-          { role: "user", content: promptContent }
-        ],
+        ]
       });
       
-      const alternativeText = response3.choices[0].message.content;
-      return `Note: We could not directly access the content from the provided URL. ${pathHasJobKeyword ? 
-        "The following is a general structure based on the URL pattern:" : 
-        "The URL provided doesn't appear to be a typical job posting link. Using generic job information instead:"}\n\n${alternativeText}`;
+      const extractedText = response.choices[0].message.content;
+      
+      return extractedText || 'No job information could be extracted from the provided link.';
+    } catch (webSearchError) {
+      console.error('Error with web search:', webSearchError);
+      
+      // Fallback: Use the search preview model without explicit tools
+      try {
+        const fallbackResponse = await openai.chat.completions.create({
+          model: "gpt-4o-search-preview",
+          messages: [
+            {
+              role: "user",
+              content: `Please access this job posting URL and extract all the job information from the actual webpage: ${normalizedUrl}
+
+              Extract:
+              - Company name
+              - Job title  
+              - Job description
+              - Requirements and qualifications
+              - Responsibilities
+              - Benefits
+              - Location
+              - Job type
+              
+              Present the information in a structured format suitable for creating a cover letter.`
+            }
+          ]
+        });
+        
+        const fallbackText = fallbackResponse.choices[0].message.content;
+        console.log('=== FALLBACK EXTRACTED JOB CONTENT ===');
+        console.log('URL:', normalizedUrl);
+        console.log('Content Length:', fallbackText?.length || 0);
+        console.log('Full Content:', fallbackText);
+        console.log('=== END FALLBACK CONTENT ===');
+        
+        return fallbackText || 'No job information could be extracted from the provided link.';
+      } catch (fallbackError) {
+        console.error('Fallback extraction also failed:', fallbackError);
+        throw new Error('Failed to extract job information from the provided URL. Please check if the URL is valid and accessible.');
+      }
     }
   } catch (error) {
     console.error('Error extracting text from job link:', error);

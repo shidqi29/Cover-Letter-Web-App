@@ -34,7 +34,6 @@ const CoverLetterForm: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [linkValidating, setLinkValidating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [apiStatus, setApiStatus] = useState<string>("Not tested");
   const [jobInputType, setJobInputType] = useState<"image" | "link">("image");
   const [jobLink, setJobLink] = useState<string>("");
   const [jobSource, setJobSource] = useState<string>("");
@@ -45,22 +44,6 @@ const CoverLetterForm: React.FC = () => {
   const [cvInputQuality, setCvInputQuality] =
     useState<InputQualityStatus>("unknown");
   const [isRelatedInputs, setIsRelatedInputs] = useState<boolean | null>(null);
-
-  // Test API connection on component mount
-  useEffect(() => {
-    const testApiConnection = async () => {
-      try {
-        const response = await axios.get("/api/test");
-        setApiStatus(`API test successful: ${response.data.message}`);
-        console.log("API test response:", response.data);
-      } catch (err) {
-        setApiStatus("API test failed");
-        console.error("API test error:", err);
-      }
-    };
-
-    testApiConnection();
-  }, []);
 
   // Validate job link when it changes
   useEffect(() => {
@@ -111,75 +94,7 @@ const CoverLetterForm: React.FC = () => {
       setCvPreview(null);
     }
   };
-  const handleTestEndpoint = async () => {
-    setLoading(true);
-    setError(null);
-    setCoverLetter("");
-
-    try {
-      // Use fetch for streaming support
-      const response = await fetch("/api/test?stream=true", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ testData: "This is a test" }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to test API");
-      }
-
-      // Handle the stream response
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error("Response stream not available");
-      }
-
-      const decoder = new TextDecoder();
-      let accumulatedContent = "";
-
-      // Process stream chunks
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        // Decode and accumulate the chunk
-        const chunk = decoder.decode(value, { stream: true });
-        accumulatedContent += chunk;
-        setCoverLetter(accumulatedContent);
-      }
-      // Final chunk has been processed
-      const finalText = decoder.decode();
-      if (finalText) {
-        accumulatedContent += finalText;
-        setCoverLetter(accumulatedContent);
-      }
-
-      // Show success notification
-      toast.success("API test successful", {
-        description: "The API endpoint is responding correctly with streaming.",
-        duration: 3000,
-      });
-    } catch (err) {
-      console.error("Test API error details:", err);
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "An unexpected error occurred while testing API";
-
-      setError(errorMessage);
-
-      // Show error notification
-      toast.error("API test failed", {
-        description: errorMessage,
-        duration: 5000,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }; // Add state for adaptive content banner
+  // Add state for adaptive content banner
   const [hasLimitedJobInfo, setHasLimitedJobInfo] = useState<boolean>(false);
   const [hasLimitedCvInfo, setHasLimitedCvInfo] = useState<boolean>(false);
   const [isJobInfoRelevant, setIsJobInfoRelevant] = useState<boolean>(true);
@@ -518,7 +433,6 @@ const CoverLetterForm: React.FC = () => {
     <Card className="mx-auto w-full max-w-2xl p-6 shadow-lg">
       <CardHeader>
         <CardTitle>Generate Cover Letter</CardTitle>
-        <div className="text-sm text-gray-500">API Status: {apiStatus}</div>
       </CardHeader>{" "}
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -741,14 +655,6 @@ const CoverLetterForm: React.FC = () => {
           <div className="flex space-x-2">
             <Button type="submit" className="flex-1" disabled={loading}>
               {loading ? "Generating..." : "Generate Cover Letter"}
-            </Button>
-            <Button
-              type="button"
-              onClick={handleTestEndpoint}
-              className="flex-1"
-              disabled={loading}
-            >
-              Test API
             </Button>
           </div>
           <ProgressIndicator loading={loading} />
