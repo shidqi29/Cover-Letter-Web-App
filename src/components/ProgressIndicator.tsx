@@ -6,13 +6,14 @@ interface ProgressIndicatorProps {
 
 const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ loading }) => {
   if (!loading) return null;
-
   return (
     <div className="my-2 flex items-center space-x-2">
       <div className="h-1 w-full overflow-hidden rounded-full bg-gray-200">
         <div className="h-1 animate-progress rounded-full bg-blue-500"></div>
       </div>
-      <span className="text-sm text-blue-500">Processing...</span>
+      <span className="whitespace-nowrap text-xs text-blue-500 sm:text-sm">
+        Processing...
+      </span>
     </div>
   );
 };

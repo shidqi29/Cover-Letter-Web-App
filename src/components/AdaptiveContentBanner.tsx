@@ -43,14 +43,17 @@ const AdaptiveContentBanner: React.FC<AdaptiveContentBannerProps> = ({
       ? "This cover letter was created with limited job information. We focused more on your CV/resume content."
       : "This cover letter was created with limited CV information. We focused more on the job requirements.";
   }
-
   return (
-    <div className={`${bgColor} border ${borderColor} mb-4 rounded-md p-4`}>
+    <div
+      className={`${bgColor} border ${borderColor} mb-4 rounded-md p-3 sm:p-4`}
+    >
       <div className="flex">
         <div className="flex-shrink-0">{icon}</div>
         <div className="ml-3">
-          <h3 className={`text-sm font-medium ${textColor}`}>{title}</h3>
-          <div className={`mt-2 text-sm ${textColor}`}>
+          <h3 className={`text-sm font-medium sm:text-base ${textColor}`}>
+            {title}
+          </h3>
+          <div className={`mt-2 text-xs sm:text-sm ${textColor}`}>
             <p>{message}</p>
           </div>
         </div>
