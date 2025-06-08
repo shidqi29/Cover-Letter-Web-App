@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface CardProps {
   className?: string;
@@ -7,7 +7,9 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ className, children }) => {
   return (
-    <div className={`bg-white rounded-lg shadow-md p-4 ${className}`}>
+    <div
+      className={`rounded-lg bg-white p-3 shadow-md sm:p-4 lg:p-6 ${className}`}
+    >
       {children}
     </div>
   );
@@ -18,20 +20,24 @@ interface CardHeaderProps {
 }
 
 export const CardHeader: React.FC<CardHeaderProps> = ({ children }) => {
-  return (
-    <div className="mb-4">
-      {children}
-    </div>
-  );
+  return <div className="mb-3 sm:mb-4">{children}</div>;
 };
 
 interface CardTitleProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-export const CardTitle: React.FC<CardTitleProps> = ({ children }) => {
+export const CardTitle: React.FC<CardTitleProps> = ({
+  children,
+  className,
+}) => {
   return (
-    <h2 className="text-xl font-bold">{children}</h2>
+    <h2
+      className={`text-lg font-bold sm:text-xl lg:text-2xl ${className || ""}`}
+    >
+      {children}
+    </h2>
   );
 };
 
@@ -40,9 +46,5 @@ interface CardContentProps {
 }
 
 export const CardContent: React.FC<CardContentProps> = ({ children }) => {
-  return (
-    <div>
-      {children}
-    </div>
-  );
-}; 
+  return <div>{children}</div>;
+};

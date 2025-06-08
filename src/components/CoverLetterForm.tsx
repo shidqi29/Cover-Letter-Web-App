@@ -430,23 +430,25 @@ const CoverLetterForm: React.FC = () => {
   }; // Using imported getQualityTooltipMessage from document-utils.ts
 
   return (
-    <Card className="mx-auto w-full max-w-2xl p-6 shadow-lg">
+    <Card className="mx-auto w-full max-w-4xl p-3 shadow-lg sm:p-4 lg:p-6">
       <CardHeader>
-        <CardTitle>Generate Cover Letter</CardTitle>
-      </CardHeader>{" "}
+        <CardTitle className="text-lg sm:text-xl lg:text-2xl">
+          Generate Cover Letter
+        </CardTitle>
+      </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {" "}
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div className="mb-4">
-            <div className="mb-2 flex items-center justify-between">
-              <Label className="text-lg font-semibold">
+            <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <Label className="text-base font-semibold sm:text-lg">
                 Job Information Source
               </Label>
-              <div className="flex gap-2 rounded-lg bg-slate-100 p-1">
+              <div className="flex w-full gap-1 rounded-lg bg-slate-100 p-1 sm:w-auto sm:gap-2">
                 <Button
                   type="button"
                   size="sm"
                   variant={jobInputType === "image" ? "default" : "ghost"}
+                  className="flex-1 text-xs sm:flex-none sm:text-sm"
                   onClick={() => {
                     setJobInputType("image");
                     setJobLink("");
@@ -474,6 +476,7 @@ const CoverLetterForm: React.FC = () => {
                   type="button"
                   size="sm"
                   variant={jobInputType === "link" ? "default" : "ghost"}
+                  className="flex-1 text-xs sm:flex-none sm:text-sm"
                   onClick={() => {
                     setJobInputType("link");
                     setJobPosterPreview(null);
@@ -500,7 +503,7 @@ const CoverLetterForm: React.FC = () => {
             </div>
 
             {jobInputType === "image" ? (
-              <div className="rounded-lg border bg-white p-4 shadow-sm">
+              <div className="rounded-lg border bg-white p-3 shadow-sm sm:p-4">
                 {" "}
                 <div className="mb-2 flex items-center">
                   <Label htmlFor="jobPoster" className="block">
@@ -539,7 +542,7 @@ const CoverLetterForm: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="rounded-lg border bg-white p-4 shadow-sm">
+              <div className="rounded-lg border bg-white p-3 shadow-sm sm:p-4">
                 {" "}
                 <div className="mb-2 flex items-center">
                   <Label htmlFor="jobLink" className="block">
@@ -605,7 +608,7 @@ const CoverLetterForm: React.FC = () => {
             )}
           </div>{" "}
           <div className="mb-4">
-            <div className="rounded-lg border bg-white p-4 shadow-sm">
+            <div className="rounded-lg border bg-white p-3 shadow-sm sm:p-4">
               {" "}
               <div className="mb-2 flex items-center">
                 <Label htmlFor="cv" className="block">
@@ -625,12 +628,12 @@ const CoverLetterForm: React.FC = () => {
               <p className="mb-2 text-xs text-gray-500">
                 Upload your CV/resume in PDF or DOCX format. We&apos;ll match
                 your skills with the job requirements.
-              </p>
+              </p>{" "}
               {cvPreview && (
                 <div className="mt-2 overflow-hidden rounded border">
                   <iframe
                     src={cvPreview}
-                    className="h-64 w-full"
+                    className="h-48 w-full sm:h-64"
                     title="CV Preview"
                   />
                 </div>
@@ -638,28 +641,43 @@ const CoverLetterForm: React.FC = () => {
             </div>
           </div>{" "}
           <div className="mb-4">
-            <div className="rounded-lg border bg-white p-4 shadow-sm">
-              <Label className="mb-2 block">Select Language</Label>
-              <RadioGroup defaultValue="english" className="flex gap-4">
+            <div className="rounded-lg border bg-white p-3 shadow-sm sm:p-4">
+              <Label className="mb-2 block text-sm sm:text-base">
+                Select Language
+              </Label>
+              <RadioGroup
+                defaultValue="english"
+                className="flex flex-col gap-2 sm:flex-row sm:gap-4"
+              >
                 <div className="flex items-center space-x-2 rounded-md border p-2 hover:bg-slate-50">
                   <RadioGroupItem value="english" id="english" />
-                  <Label htmlFor="english">English</Label>
+                  <Label htmlFor="english" className="text-sm sm:text-base">
+                    English
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2 rounded-md border p-2 hover:bg-slate-50">
                   <RadioGroupItem value="indonesian" id="indonesian" />
-                  <Label htmlFor="indonesian">Bahasa Indonesia</Label>
+                  <Label htmlFor="indonesian" className="text-sm sm:text-base">
+                    Bahasa Indonesia
+                  </Label>
                 </div>
               </RadioGroup>
             </div>
           </div>
           <div className="flex space-x-2">
-            <Button type="submit" className="flex-1" disabled={loading}>
+            <Button
+              type="submit"
+              className="flex-1 py-2 text-sm sm:py-3 sm:text-base"
+              disabled={loading}
+            >
               {loading ? "Generating..." : "Generate Cover Letter"}
             </Button>
           </div>
           <ProgressIndicator loading={loading} />
         </form>
-        {error && <p className="mt-2 text-red-500">{error}</p>}{" "}
+        {error && (
+          <p className="mt-2 text-sm text-red-500 sm:text-base">{error}</p>
+        )}
         {!loading && coverLetter && (
           <AdaptiveContentBanner
             hasLimitedJobInfo={hasLimitedJobInfo}
@@ -668,10 +686,9 @@ const CoverLetterForm: React.FC = () => {
           />
         )}
         {(coverLetter || loading) && (
-          <div className="mt-4 rounded bg-gray-100 p-4">
-            {" "}
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold">
+          <div className="mt-4 rounded bg-gray-100 p-3 sm:p-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <h3 className="text-sm font-bold sm:text-base">
                 {loading
                   ? "Generating Cover Letter..."
                   : "Generated Cover Letter:"}
@@ -682,6 +699,7 @@ const CoverLetterForm: React.FC = () => {
                     type="button"
                     size="sm"
                     variant="outline"
+                    className="text-xs sm:text-sm"
                     onClick={() => {
                       navigator.clipboard.writeText(coverLetter);
                       toast.success("Copied to clipboard!", {
@@ -692,19 +710,21 @@ const CoverLetterForm: React.FC = () => {
                     }}
                   >
                     Copy
-                  </Button>{" "}
+                  </Button>
                   <DownloadButton content={coverLetter} />
                 </div>
               )}
-            </div>{" "}
+            </div>
             <div className="relative mt-2">
               <StreamingText text={coverLetter || ""} isLoading={loading} />
             </div>
           </div>
         )}{" "}
         {/* Input quality assessment status */}
-        <div className="mt-4 rounded-lg bg-white p-4 shadow-sm">
-          <h4 className="font-semibold">Input Quality Assessment</h4>
+        <div className="mt-4 rounded-lg bg-white p-3 shadow-sm sm:p-4">
+          <h4 className="text-sm font-semibold sm:text-base">
+            Input Quality Assessment
+          </h4>
           <div className="mt-2 space-y-3">
             {/* Job information quality status */}
             <div className="flex items-center justify-between">
