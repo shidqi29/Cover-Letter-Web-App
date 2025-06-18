@@ -246,6 +246,7 @@ export async function POST(request: Request) {
     const jobPoster = formData.get('jobPoster') as File | null;
     const jobLink = formData.get('jobLink') as string || '';
     const cv = formData.get('cv') as File | null;
+    const selectedTemplate = formData.get('template') as string || 'professional';
 
     if ((!jobPoster && jobInputType === 'image') || (!jobLink && jobInputType === 'link') || !cv) {
       return NextResponse.json(
@@ -305,15 +306,14 @@ export async function POST(request: Request) {
           { error: 'Failed to process CV file' },
           { status: 400 }
         );
-      }
-    }    // Use enhanced input analysis function to determine the best approach
+      }    }    // Use enhanced input analysis function to determine the best approach
     const { 
       systemPrompt, 
       userPrompt, 
       hasLimitedJobInfo, 
       hasLimitedCvInfo,
       isJobInfoRelevant 
-    } = analyzeInputsAndGetInstructions(jobPosterText, cvText, language);
+    } = analyzeInputsAndGetInstructions(jobPosterText, cvText, language, selectedTemplate);
 
     // Log the analysis results for debugging
     console.log('Input analysis results:', {
@@ -409,9 +409,10 @@ export async function POST(request: Request) {
  * @param jobText Text extracted from job posting
  * @param cvText Text extracted from CV/resume
  * @param language Language to use for the cover letter
+ * @param template Template style to use for the cover letter
  * @returns Instructions for generating cover letter based on input quality and relevance
  */
-function analyzeInputsAndGetInstructions(jobText: string, cvText: string, language: string): {
+function analyzeInputsAndGetInstructions(jobText: string, cvText: string, language: string, template: string = 'professional'): {
   systemPrompt: string;
   userPrompt: string;
   hasLimitedJobInfo: boolean;
@@ -453,12 +454,58 @@ function analyzeInputsAndGetInstructions(jobText: string, cvText: string, langua
   } else if (hasLimitedCvInfo) {
     operatingMode = "job_focused"; // CV info is limited, focus on job
   }
+    console.log(`Operating mode: ${operatingMode}, Limited job info: ${hasLimitedJobInfo}, Limited CV: ${hasLimitedCvInfo}, Job relevant: ${isJobInfoRelevant}`);
   
-  console.log(`Operating mode: ${operatingMode}, Limited job info: ${hasLimitedJobInfo}, Limited CV: ${hasLimitedCvInfo}, Job relevant: ${isJobInfoRelevant}`);
+  // Template-specific styling instructions
+  let templateInstructions = '';
+  switch (template) {
+    case 'professional':
+      templateInstructions = `
+Style Guidelines for Professional Template:
+- Use formal, traditional business language
+- Maintain a respectful and conservative tone
+- Structure with clear, well-defined paragraphs
+- Use conventional business letter format
+- Keep language precise and authoritative
+- Focus on qualifications and achievements
+- End with formal closing (e.g., "Sincerely")`;
+      break;
+    
+    case 'modern':
+      templateInstructions = `
+Style Guidelines for Modern Template:
+- Use contemporary, concise language
+- Balance professionalism with approachability
+- Include brief, impactful sentences alongside detailed explanations
+- Show enthusiasm while remaining professional
+- Use active voice and dynamic language
+- Highlight innovation and adaptability
+- End with confident closing (e.g., "Best regards")`;
+      break;
+    
+    case 'creative':
+      templateInstructions = `
+Style Guidelines for Creative Template:
+- Use engaging, personality-driven language
+- Show creativity and unique perspective
+- Include storytelling elements where appropriate
+- Express passion and enthusiasm authentically
+- Use varied sentence structures for flow
+- Highlight creative achievements and thinking
+- End with personalized closing that reflects the candidate's style`;
+      break;
+    
+    default:
+      templateInstructions = templateInstructions; // Use professional as default
+  }
   
   // Base system prompt
   let systemPrompt = `You are a professional cover letter writer with expertise in creating compelling and personalized cover letters.
-Your task is to create a professional cover letter that:`;
+Your task is to create a professional cover letter that follows the ${template} template style.
+
+${templateInstructions}
+
+General Requirements:`;
 
   // Adjust prompts based on operating mode
   switch (operatingMode) {
@@ -589,6 +636,19 @@ Please ensure the cover letter:
       `Uses concrete examples from the candidate's CV to demonstrate qualifications`}
 5. Is written in ${language}
 6. Follows professional business letter format with proper spacing and paragraphs
+7. IMPORTANT: Places all user contact information (name, email, phone, address) at the END of the letter, AFTER the signature and closing, not at the top
+
+Structure the cover letter exactly as follows:
+- Start directly with the greeting (Dear [Name/Hiring Manager])
+- Include the cover letter body paragraphs
+- End with professional closing (Sincerely, Best regards, etc.)
+- Add signature line
+- THEN add the user's contact information at the very bottom in this format:
+  
+  [User's Full Name]
+  [Email Address]
+  [Phone Number]
+  [Address if available]
 
 ${operatingMode !== "standard" ? 
   `Note: Some specific details may be limited in the provided information. Create the best possible cover letter using what's available, and fill in with reasonable professional content where needed.` : 

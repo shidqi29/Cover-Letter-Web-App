@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -27,7 +28,14 @@ import InputQualityIndicator, {
 import Image from "next/image";
 import { AlertCircle, AlertTriangle, CheckCircle, Info } from "lucide-react";
 
-const CoverLetterForm: React.FC = () => {
+interface CoverLetterFormProps {
+  selectedTemplate: string | null;
+}
+
+const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
+  selectedTemplate,
+}) => {
+  const router = useRouter();
   const [jobPosterPreview, setJobPosterPreview] = useState<string | null>(null);
   const [cvPreview, setCvPreview] = useState<string | null>(null);
   const [coverLetter, setCoverLetter] = useState<string | null>(null);
@@ -141,14 +149,20 @@ const CoverLetterForm: React.FC = () => {
         );
         setLoading(false);
         return;
-      }
-
-      // Validate CV
+      } // Validate CV
       if (!cvFile) {
         setError("Please upload your CV/resume");
         setLoading(false);
         return;
       }
+
+      // Validate template selection
+      if (!selectedTemplate) {
+        setError("Please select a cover letter template");
+        setLoading(false);
+        return;
+      }
+
       // Assess input quality and provide feedback to the user
       let hasLimitedInputs = false;
       let warningMessage = "";
@@ -212,10 +226,14 @@ const CoverLetterForm: React.FC = () => {
           duration: 6000,
         });
       }
-
       const formData = new FormData();
       formData.append("language", language);
       formData.append("jobInputType", jobInputType);
+
+      // Add template information
+      if (selectedTemplate) {
+        formData.append("template", selectedTemplate);
+      }
 
       if (jobInputType === "image" && jobPosterFile) {
         formData.append("jobPoster", jobPosterFile);
@@ -295,11 +313,16 @@ const CoverLetterForm: React.FC = () => {
         setCoverLetter(accumulatedContent);
       }
 
-      // Show success notification
+      // Show success notification and redirect to result page
       toast.success("Cover letter generated successfully!", {
-        description: "Your cover letter is ready to use.",
-        duration: 3000,
-      });
+        description: "Redirecting to your generated cover letter...",
+        duration: 2000,
+      }); // Encode the cover letter content and redirect to result page
+      const encodedContent = encodeURIComponent(accumulatedContent);
+      const templateParam = selectedTemplate
+        ? `&template=${selectedTemplate}`
+        : "";
+      router.push(`/generate/result?content=${encodedContent}${templateParam}`);
     } catch (err) {
       console.error("Error details:", err);
       const errorMessage =
@@ -663,63 +686,25 @@ const CoverLetterForm: React.FC = () => {
                 </div>
               </RadioGroup>
             </div>
-          </div>
+          </div>{" "}
           <div className="flex space-x-2">
             <Button
               type="submit"
               className="flex-1 py-2 text-sm sm:py-3 sm:text-base"
-              disabled={loading}
+              disabled={loading || !selectedTemplate}
             >
-              {loading ? "Generating..." : "Generate Cover Letter"}
+              {loading
+                ? "Generating..."
+                : !selectedTemplate
+                  ? "Select Template First"
+                  : "Generate Cover Letter"}
             </Button>
           </div>
           <ProgressIndicator loading={loading} />
-        </form>
+        </form>{" "}
         {error && (
           <p className="mt-2 text-sm text-red-500 sm:text-base">{error}</p>
         )}
-        {!loading && coverLetter && (
-          <AdaptiveContentBanner
-            hasLimitedJobInfo={hasLimitedJobInfo}
-            hasLimitedCvInfo={hasLimitedCvInfo}
-            isJobInfoRelevant={isJobInfoRelevant}
-          />
-        )}
-        {(coverLetter || loading) && (
-          <div className="mt-4 rounded bg-gray-100 p-3 sm:p-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <h3 className="text-sm font-bold sm:text-base">
-                {loading
-                  ? "Generating Cover Letter..."
-                  : "Generated Cover Letter:"}
-              </h3>
-              {coverLetter && !loading && (
-                <div className="flex space-x-2">
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    className="text-xs sm:text-sm"
-                    onClick={() => {
-                      navigator.clipboard.writeText(coverLetter);
-                      toast.success("Copied to clipboard!", {
-                        description:
-                          "Cover letter content has been copied to your clipboard.",
-                        duration: 2000,
-                      });
-                    }}
-                  >
-                    Copy
-                  </Button>
-                  <DownloadButton content={coverLetter} />
-                </div>
-              )}
-            </div>
-            <div className="relative mt-2">
-              <StreamingText text={coverLetter || ""} isLoading={loading} />
-            </div>
-          </div>
-        )}{" "}
         {/* Input quality assessment status */}
         <div className="mt-4 rounded-lg bg-white p-3 shadow-sm sm:p-4">
           <h4 className="text-sm font-semibold sm:text-base">

@@ -1,15 +1,58 @@
 "use client";
 
-import CoverLetterForm from "@/components/CoverLetterForm";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import TemplateSelection from "@/components/TemplateSelection";
+import { COVER_LETTER_TEMPLATES } from "@/types/templates";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleTemplateSelect = (templateId: string) => {
+    setSelectedTemplate(templateId);
+  };
+
+  const handleContinue = () => {
+    if (selectedTemplate) {
+      router.push(`/generate?template=${selectedTemplate}`);
+    }
+  };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-4 sm:p-8 lg:p-24">
-      <div className="container mx-auto max-w-4xl py-4 sm:py-6 lg:py-8">
-        <h1 className="mb-4 text-center text-xl font-bold sm:mb-6 sm:text-2xl lg:text-3xl">
-          Cover Letter Generator
-        </h1>
-        <CoverLetterForm />
+    <main className="min-h-screen bg-gray-50 px-4 py-8">
+      <div className="container mx-auto max-w-7xl">
+        <div className="mb-8 text-center">
+          <h1 className="mb-4 text-3xl font-bold lg:text-4xl">
+            Cover Letter Generator
+          </h1>
+          <p className="text-lg text-gray-600">
+            Create professional cover letters tailored to your style and
+            industry
+          </p>
+        </div>
+
+        <div className="space-y-8">
+          {/* Template Selection */}
+          <TemplateSelection
+            templates={COVER_LETTER_TEMPLATES}
+            selectedTemplate={selectedTemplate}
+            onSelectTemplate={handleTemplateSelect}
+          />
+
+          {/* Continue Button */}
+          <div className="flex justify-center pb-8">
+            <Button
+              onClick={handleContinue}
+              disabled={!selectedTemplate}
+              className="px-8 py-3 text-lg"
+            >
+              {selectedTemplate
+                ? "Continue to Generate"
+                : "Select a Template First"}
+            </Button>
+          </div>
+        </div>
       </div>
     </main>
   );

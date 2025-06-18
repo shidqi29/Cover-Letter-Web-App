@@ -1,4 +1,52 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Cover Letter Generator Web App
+
+This is a [Next.js](https://nextjs.org/) project that generates personalized cover letters using AI technology.
+
+## ✅ **FULLY IMPLEMENTED - PRODUCTION READY**
+
+**Last Updated:** June 15, 2025  
+**Status:** All features complete and tested
+
+## Features
+
+### ✨ Complete Template System
+
+- **3 Professional Templates**: Choose from Professional, Modern, and Creative styles
+- **Visual Template Previews**: See exactly how each template looks before selection
+- **Template Switching**: Change templates on result page without regenerating content
+- **User Info Positioning**: Contact information placed at bottom of cover letters
+- **Template-Specific Generation**: AI adapts writing style based on selected template
+- **No Profile Pictures**: Creative template excludes profile elements as requested
+
+### 🤖 AI-Powered Generation
+
+- Extracts job information from images or job posting URLs
+- Analyzes CV/resume content for personalized matching
+- Supports multiple languages (English/Indonesian)
+- Adaptive content generation based on input quality
+
+### 📝 Template Styles
+
+#### Professional Template
+
+- Formal, traditional business language
+- Conservative and respectful tone
+- Clear, well-defined paragraphs
+- Conventional business letter format
+
+#### Modern Template
+
+- Contemporary, concise language
+- Balanced professionalism with approachability
+- Dynamic and engaging tone
+- Emphasis on innovation and adaptability
+
+#### Creative Template
+
+- Engaging, personality-driven language
+- Storytelling elements where appropriate
+- Authentic passion and enthusiasm
+- Unique perspective and creative achievements
 
 ## Getting Started
 
