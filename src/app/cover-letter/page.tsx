@@ -9,7 +9,7 @@ const CoverLetterPage: React.FC = () => {
       <h1 className="mb-4 text-center text-xl font-bold sm:mb-6 sm:text-2xl lg:text-3xl">
         Cover Letter Generator
       </h1>
-      <CoverLetterForm />
+      <CoverLetterForm selectedTemplate={null} />
     </div>
   );
 };

@@ -33,7 +33,7 @@ interface CoverLetterFormProps {
 }
 
 const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
-  selectedTemplate,
+  selectedTemplate = null,
 }) => {
   const router = useRouter();
   const [jobPosterPreview, setJobPosterPreview] = useState<string | null>(null);
