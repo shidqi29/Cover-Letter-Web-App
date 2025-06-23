@@ -22,8 +22,12 @@ The application follows a **Three-Tier Architecture** pattern:
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │             React Frontend                          │   │
 │  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │ UI Components│ │File Upload  │ │ Download    │   │   │
-│  │  │             │ │ Components  │ │ Components  │   │   │
+│  │  │ Template    │ │ Quality     │ │ Download    │   │   │
+│  │  │ System      │ │ Indicators  │ │ Components  │   │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
+│  │  │ File Upload │ │ Streaming   │ │ Template    │   │   │
+│  │  │ Components  │ │ Text        │ │ Switcher    │   │   │
 │  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
 │  └─────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
@@ -42,8 +46,12 @@ The application follows a **Three-Tier Architecture** pattern:
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │             Utility Libraries                       │   │
 │  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │ File        │ │ Document    │ │ Content     │   │   │
-│  │  │ Processing  │ │ Generation  │ │ Validation  │   │   │
+│  │  │ Template    │ │ Quality     │ │ Document    │   │   │
+│  │  │ Engine      │ │ Assessment  │ │ Generation  │   │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
+│  │  │ File        │ │ Link        │ │ Content     │   │   │
+│  │  │ Processing  │ │ Validation  │ │ Validation  │   │   │
 │  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
 │  └─────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
@@ -55,8 +63,9 @@ The application follows a **Three-Tier Architecture** pattern:
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │               OpenAI API                            │   │
 │  │  ┌─────────────┐ ┌─────────────┐                   │   │
-│  │  │ Text        │ │ Cover Letter│                   │   │
-│  │  │ Extraction  │ │ Generation  │                   │   │
+│  │  │ Text        │ │ Template-   │                   │   │
+│  │  │ Extraction  │ │ Aware       │                   │   │
+│  │  │ & OCR       │ │ Generation  │                   │   │
 │  │  └─────────────┘ └─────────────┘                   │   │
 │  └─────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
@@ -68,11 +77,16 @@ The application follows a **Three-Tier Architecture** pattern:
 
 #### 1. Core Components
 
-- **`CoverLetterForm`**: Main form component handling user inputs
-- **`DownloadButton`**: File download functionality with format selection
+- **`CoverLetterForm`**: Main form component handling user inputs and template selection
+- **`TemplateSelection`**: Template selection interface with preview capabilities
+- **`TemplatePreview`**: Template preview dialog with sample formatting
+- **`TemplateSwitcher`**: Content-preserving template switching component
+- **`TemplatePreviewCard`**: Individual template preview cards
+- **`DownloadButton`**: File download functionality with template-aware formatting
 - **`StreamingText`**: Real-time display of AI-generated content
-- **`FileUpload`**: Handles file upload with validation
-- **`LanguageSelector`**: Language preference selection
+- **`InputQualityIndicator`**: Visual quality assessment indicators (red/yellow/green)
+- **`AdaptiveContentBanner`**: Dynamic content tips based on input quality
+- **`ProgressIndicator`**: Enhanced progress tracking for generation process
 
 #### 2. Layout Components
 
@@ -84,94 +98,106 @@ The application follows a **Three-Tier Architecture** pattern:
 
 - **`ErrorBoundary`**: Error handling and display
 - **`LoadingSpinner`**: Loading state indicators
-- **`Toast`**: Notification system
+- **`Toast`**: Notification system for template switches and operations
 
 ### Backend Components
 
 #### 1. API Routes
 
 ```typescript
-/api/generate          // Main cover letter generation endpoint
-/api/validate          // Input validation endpoint
-/api/download          // File download endpoint
+/api/generate          // Main cover letter generation endpoint with template support
+/api/validate          // Input validation and quality assessment endpoint
+/api/download          // Template-aware file download endpoint
 /api/health           // Health check endpoint
 ```
 
 #### 2. Core Libraries
 
-- **`document-utils.ts`**: Document processing and generation utilities
-- **`file-validator.ts`**: File validation and quality assessment
-- **`ai-service.ts`**: OpenAI API integration
-- **`content-extractor.ts`**: Text extraction from files and URLs
+- **`document-utils.ts`**: Document processing, generation utilities, and quality assessment
+- **`link-validation.ts`**: Job link validation and source detection
+- **`templates.ts`**: Template definitions and formatting logic
+- **`utils.ts`**: General utility functions and helpers
 
 ## Data Flow Architecture
 
 ### Request Processing Flow
 
 ```
-User Input → Validation → Processing → AI Generation → Response
-    │           │            │            │            │
-    ▼           ▼            ▼            ▼            ▼
-┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
-│File/URL │ │Quality  │ │Content  │ │OpenAI   │ │Streaming│
-│Upload   │ │Check    │ │Extract  │ │API Call │ │Response │
-└─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘
+Template Selection → User Input → Validation → Processing → AI Generation → Template Application → Response
+        │               │           │            │            │                  │                │
+        ▼               ▼           ▼            ▼            ▼                  ▼                ▼
+   ┌─────────┐     ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐        ┌─────────┐      ┌─────────┐
+   │Template │     │File/URL │ │Quality  │ │Content  │ │OpenAI   │        │Template │      │Streaming│
+   │Preview  │     │Upload   │ │Check &  │ │Extract  │ │API Call │        │Format   │      │Response │
+   │& Select │     │         │ │Indicate │ │         │ │w/Template│       │Apply    │      │w/Style  │
+   └─────────┘     └─────────┘ └─────────┘ └─────────┘ └─────────┘        └─────────┘      └─────────┘
 ```
 
 ### Data Processing Pipeline
 
-1. **Input Reception**
+1. **Template Selection**
 
-   - File upload handling
-   - URL validation
-   - Format verification
+   - Display template options (Professional, Modern, Creative)
+   - Preview template formatting
+   - Store template choice for generation context
 
-2. **Content Extraction**
+2. **Input Reception**
+
+   - File upload handling with progress indicators
+   - URL validation with real-time feedback
+   - Format verification with quality assessment
+
+3. **Quality Assessment & Visual Feedback**
+
+   - Real-time input quality analysis
+   - Color-coded indicators (green/yellow/red)
+   - Adaptive content banners with improvement tips
+   - Generation mode selection based on quality
+
+4. **Content Extraction**
 
    - Image text extraction via OCR
    - PDF/DOCX text parsing
-   - Web content scraping
+   - Web content scraping with source detection
 
-3. **Quality Assessment**
+5. **Template-Aware AI Processing**
 
-   - Content completeness analysis
-   - Quality scoring algorithm
-   - Generation mode selection
+   - Template-specific prompt engineering
+   - OpenAI API integration with template context
+   - Response streaming with formatting
 
-4. **AI Processing**
-
-   - Prompt engineering
-   - OpenAI API integration
-   - Response streaming
-
-5. **Output Generation**
-   - Content formatting
-   - File generation (PDF/DOCX)
-   - Download preparation
+6. **Template Application & Output Generation**
+   - Apply selected template styling to content
+   - Template-specific formatting for downloads
+   - Content-preserving template switching capability
 
 ## Technology Stack
 
 ### Frontend Technologies
 
-| Component        | Technology   | Version  | Purpose                  |
-| ---------------- | ------------ | -------- | ------------------------ |
-| Framework        | Next.js      | 14.x     | React framework with SSR |
-| UI Library       | React        | 18.x     | Component-based UI       |
-| Styling          | Tailwind CSS | 3.x      | Utility-first CSS        |
-| State Management | React Hooks  | Built-in | Local state management   |
-| Type Safety      | TypeScript   | 5.x      | Static type checking     |
-| Build Tool       | Webpack      | Built-in | Module bundling          |
+| Component        | Technology   | Version  | Purpose                         |
+| ---------------- | ------------ | -------- | ------------------------------- |
+| Framework        | Next.js      | 14.x     | React framework with SSR        |
+| UI Library       | React        | 18.x     | Component-based UI              |
+| Styling          | Tailwind CSS | 3.x      | Utility-first CSS               |
+| UI Components    | shadcn/ui    | Latest   | Pre-built accessible components |
+| State Management | React Hooks  | Built-in | Local state management          |
+| Type Safety      | TypeScript   | 5.x      | Static type checking            |
+| Icons            | Lucide React | Latest   | Consistent icon library         |
+| Notifications    | Sonner       | Latest   | Toast notifications             |
+| Build Tool       | Webpack      | Built-in | Module bundling                 |
 
 ### Backend Technologies
 
-| Component           | Technology  | Version | Purpose             |
-| ------------------- | ----------- | ------- | ------------------- |
-| Runtime             | Node.js     | 18.x    | JavaScript runtime  |
-| Framework           | Next.js API | 14.x    | API route handling  |
-| AI Integration      | OpenAI API  | 4.x     | Text generation     |
-| File Processing     | pdf-parse   | Latest  | PDF text extraction |
-| Document Generation | docx        | Latest  | DOCX file creation  |
-| PDF Generation      | jsPDF       | Latest  | PDF file creation   |
+| Component           | Technology  | Version | Purpose                      |
+| ------------------- | ----------- | ------- | ---------------------------- |
+| Runtime             | Node.js     | 18.x    | JavaScript runtime           |
+| Framework           | Next.js API | 14.x    | API route handling           |
+| AI Integration      | OpenAI API  | 4.x     | Template-aware generation    |
+| File Processing     | pdf-parse   | Latest  | PDF text extraction          |
+| Document Generation | docx        | Latest  | Template-aware DOCX creation |
+| PDF Generation      | jsPDF       | Latest  | Template-aware PDF creation  |
+| OCR Processing      | Tesseract   | Latest  | Image text extraction        |
 
 ### Development Tools
 
@@ -186,10 +212,10 @@ User Input → Validation → Processing → AI Generation → Response
 
 ### External API Integration
 
-#### OpenAI API Integration
+#### OpenAI API Integration with Template Context
 
 ```typescript
-// API Configuration
+// Template-Aware API Configuration
 const openaiConfig = {
   apiKey: process.env.OPENAI_API_KEY,
   model: "gpt-4",
@@ -197,28 +223,88 @@ const openaiConfig = {
   temperature: 0.7
 }
 
-// Streaming Response Handler
-const streamResponse = async (prompt: string) => {
+// Template-Specific Prompt Engineering
+const generateTemplatePrompt = (jobInfo: string, cvInfo: string, template: string) => {
+  const templateContext = {
+    professional: "formal, conservative tone with traditional business language",
+    modern: "contemporary, balanced tone with clean, direct communication",
+    creative: "engaging, dynamic tone that showcases personality and innovation"
+  };
+
+  return `Generate a cover letter with ${templateContext[template]} style...`;
+};
+
+// Streaming Response Handler with Template Context
+const streamResponse = async (prompt: string, template: string) => {
   const stream = await openai.chat.completions.create({
     model: "gpt-4",
-    messages: [{ role: "user", content: prompt }],
+    messages: [
+      { role: "system", content: `You are generating content for a ${template} cover letter template.` },
+      { role: "user", content: prompt }
+    ],
     stream: true
   });
 
-  // Stream chunks to frontend
+  // Stream chunks to frontend with template metadata
   for await (const chunk of stream) {
-    yield chunk.choices[0]?.delta?.content || '';
+    yield {
+      content: chunk.choices[0]?.delta?.content || '',
+      template: template,
+      timestamp: Date.now()
+    };
   }
 }
 ```
 
-#### File Processing Integration
+#### Quality Assessment Integration
 
 ```typescript
-// File Upload Handler
+// Real-time Quality Assessment
+const assessInputQuality = (inputType: 'image' | 'link', data: any) => {
+  let qualityScore = 0;
+  let indicator: 'red' | 'yellow' | 'green' = 'red';
+
+  if (inputType === 'image') {
+    // Assess image quality factors
+    qualityScore = assessImageQuality(data);
+  } else {
+    // Assess link quality factors
+    qualityScore = assessLinkQuality(data);
+  }
+
+  if (qualityScore >= 80) indicator = 'green';
+  else if (qualityScore >= 50) indicator = 'yellow';
+
+  return { score: qualityScore, indicator, tips: getQualityTips(qualityScore) };
+};
+
+// Template Switching with Content Preservation
+const switchTemplate = (content: string, newTemplate: string) => {
+  // Preserve content completely unchanged
+  const preservedContent = content;
+
+  // Update URL parameters for template context
+  const updatedParams = {
+    content: encodeURIComponent(preservedContent),
+    template: newTemplate
+  };
+
+  return { content: preservedContent, template: newTemplate, params: updatedParams };
+};
+```
+
+#### File Processing Integration with Quality Assessment
+
+```typescript
+// Enhanced File Upload Handler with Quality Assessment
 const processFile = async (file: File) => {
   const fileType = file.type;
+  const fileSize = file.size;
   let extractedText = '';
+  let qualityAssessment = { score: 0, indicator: 'red' as const, tips: [] };
+
+  // Assess file quality before processing
+  qualityAssessment = assessFileQuality(file);
 
   switch (fileType) {
     case 'application/pdf':
@@ -233,8 +319,19 @@ const processFile = async (file: File) => {
       break;
   }
 
-  return extractedText;
-}
+  return { text: extractedText, quality: qualityAssessment };
+};
+
+// Template-Aware Document Generation
+const generateDocument = async (content: string, template: string, format: 'pdf' | 'docx') => {
+  const templateConfig = COVER_LETTER_TEMPLATES.find(t => t.id === template);
+
+  if (format === 'pdf') {
+    return generatePDFWithTemplate(content, templateConfig);
+  } else {
+    return generateDOCXWithTemplate(content, templateConfig);
+  }
+};
 ```
 
 ## Security Architecture
@@ -268,24 +365,47 @@ const processFile = async (file: File) => {
 ### Security Implementation
 
 ```typescript
-// Rate Limiting
+// Rate Limiting with Template Operations
 const rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP'
+  message: 'Too many requests from this IP',
+  // Different limits for different operations
+  skipSuccessfulRequests: true
 });
 
-// File Validation
+// Enhanced File Validation with Quality Checks
 const validateFile = (file: File) => {
-  const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-  const maxSize = 5 * 1024 * 1024; // 5MB
+  const allowedTypes = [
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'image/jpeg',
+    'image/png'
+  ];
+  const maxSize = 10 * 1024 * 1024; // 10MB for images, 5MB for documents
 
   if (!allowedTypes.includes(file.type)) {
     throw new Error('Invalid file type');
   }
 
-  if (file.size > maxSize) {
+  const sizeLimit = file.type.startsWith('image/') ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+  if (file.size > sizeLimit) {
     throw new Error('File too large');
+  }
+
+  // Additional security checks for image files
+  if (file.type.startsWith('image/')) {
+    validateImageIntegrity(file);
+  }
+};
+
+// Template Security Validation
+const validateTemplateOperation = (templateId: string, operation: string) => {
+  const allowedTemplates = ['professional', 'modern', 'creative'];
+  const allowedOperations = ['select', 'preview', 'switch', 'download'];
+
+  if (!allowedTemplates.includes(templateId) || !allowedOperations.includes(operation)) {
+    throw new Error('Invalid template operation');
   }
 };
 ```
@@ -296,33 +416,45 @@ const validateFile = (file: File) => {
 
 1. **Frontend Optimization**
 
-   - Component lazy loading
-   - Image optimization
-   - Bundle size optimization
-   - Caching strategies
+   - Component lazy loading for template previews
+   - Template asset optimization and caching
+   - Image optimization for template previews
+   - Bundle size optimization with code splitting
+   - Real-time indicator caching strategies
 
 2. **Backend Optimization**
 
-   - Streaming responses
-   - Asynchronous processing
-   - Memory management
-   - Connection pooling
+   - Streaming responses for AI generation
+   - Template-aware caching for repeated operations
+   - Asynchronous quality assessment processing
+   - Memory management for template operations
+   - Connection pooling for external APIs
 
 3. **Network Optimization**
-   - Compression (gzip/brotli)
-   - CDN integration potential
-   - Efficient API design
-   - Minimal payload sizes
+   - Compression (gzip/brotli) for template assets
+   - CDN integration potential for template resources
+   - Efficient API design with template context
+   - Minimal payload sizes for quality indicators
+   - Optimized template switching operations
 
 ### Caching Strategy
 
 ```typescript
-// Response Caching
+// Enhanced Response Caching with Template Support
 const cacheConfig = {
   'text/html': 'no-cache',
   'application/json': 'no-cache',
   'application/pdf': 'private, max-age=3600',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'private, max-age=3600'
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'private, max-age=3600',
+  // Template-specific caching
+  'template-preview': 'public, max-age=86400', // 24 hours
+  'quality-assessment': 'private, max-age=300' // 5 minutes
+};
+
+// Template Preview Caching
+const templatePreviewCache = new Map();
+const getCachedTemplatePreview = (templateId: string) => {
+  return templatePreviewCache.get(templateId);
 };
 ```
 
@@ -333,34 +465,38 @@ const cacheConfig = {
 1. **Stateless Design**
 
    - No server-side session storage
-   - Functional component architecture
-   - Immutable data patterns
+   - Functional component architecture with template context
+   - Immutable data patterns for template operations
+   - Template state managed client-side
 
 2. **Load Balancing Ready**
 
    - Health check endpoints
    - Graceful shutdown handling
    - Connection draining
+   - Template resource distribution
 
 3. **Database Preparation**
-   - NoSQL document structure ready
-   - Read replica architecture
-   - Caching layer integration
+   - NoSQL document structure ready for template metadata
+   - Read replica architecture for template assets
+   - Caching layer integration for quality assessments
 
 ### Vertical Scaling Optimization
 
 1. **Resource Efficiency**
 
-   - Memory leak prevention
-   - CPU optimization
-   - I/O optimization
+   - Memory leak prevention in template operations
+   - CPU optimization for quality assessment algorithms
+   - I/O optimization for template switching
+   - Efficient template asset loading
 
 2. **Monitoring Integration**
-   - Performance metrics
-   - Error tracking
-   - Resource usage monitoring
+   - Performance metrics for template operations
+   - Error tracking for quality assessment failures
+   - Resource usage monitoring for AI operations
+   - Template switching performance analytics
 
 ---
 
 _Document prepared for thesis project using RUP (Rational Unified Process) methodology_  
-_Date: June 9, 2025_
+_Updated: June 23, 2025 - Reflects current implementation with visual template system, real-time quality assessment, content-preserving template switching, enhanced security, and optimized performance for template operations_

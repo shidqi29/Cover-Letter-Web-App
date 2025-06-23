@@ -40,7 +40,25 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 ├─────────────────────────────────────┤
 │ + render(): JSX.Element             │
 ├─────────────────────────────────────┤
+│ - Uses: TemplateSelection           │
 │ - Uses: CoverLetterForm             │
+└─────────────────────────────────────┘
+                    │
+                    │ composition
+                    ▼
+┌─────────────────────────────────────┐
+│          <<React.FC>>               │
+│        TemplateSelection            │
+├─────────────────────────────────────┤
+│ - templates: CoverLetterTemplate[]  │
+│ - selectedTemplate: string | null   │
+├─────────────────────────────────────┤
+│ + onSelectTemplate(): void          │
+│ + getIcon(): JSX.Element            │
+│ + getColorClasses(): string         │
+│ + render(): JSX.Element             │
+├─────────────────────────────────────┤
+│ - Uses: TemplatePreviewCard         │
 └─────────────────────────────────────┘
                     │
                     │ composition
@@ -49,6 +67,7 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │          <<React.FC>>               │
 │         CoverLetterForm             │
 ├─────────────────────────────────────┤
+│ - selectedTemplate: string | null   │
 │ - jobPosterPreview: string | null   │
 │ - cvPreview: string | null          │
 │ - coverLetter: string | null        │
@@ -73,9 +92,121 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ - Uses: InputQualityIndicator       │
 │ - Uses: AdaptiveContentBanner       │
 └─────────────────────────────────────┘
+                    │
+                    │ composition
+                    ▼
+┌─────────────────────────────────────┐
+│          <<React.FC>>               │
+│           ResultPage                │
+├─────────────────────────────────────┤
+│ - coverLetter: string               │
+│ - templateName: string              │
+│ - loading: boolean                  │
+├─────────────────────────────────────┤
+│ + handleCopyToClipboard(): void     │
+│ + handleShare(): void               │
+│ + handleBackToHome(): void          │
+│ + render(): JSX.Element             │
+├─────────────────────────────────────┤
+│ - Uses: TemplateSwitcher            │
+│ - Uses: TemplatePreview             │
+│ - Uses: TemplateComparison          │
+│ - Uses: DownloadButton              │
+└─────────────────────────────────────┘
 ```
 
-### UI Component Classes
+### Template System Components
+
+```
+┌─────────────────────────────────────┐
+│          <<Interface>>              │
+│    TemplatePreviewCardProps         │
+├─────────────────────────────────────┤
+│ + template: CoverLetterTemplate     │
+│ + isSelected: boolean               │
+│ + onSelect: () => void              │
+└─────────────────────────────────────┘
+                    │
+                    │ implements
+                    ▼
+┌─────────────────────────────────────┐
+│          <<React.FC>>               │
+│      TemplatePreviewCard            │
+├─────────────────────────────────────┤
+│ + getTemplateIcon(): JSX.Element    │
+│ + getColorClasses(): string         │
+│ + render(): JSX.Element             │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│          <<Interface>>              │
+│      TemplatePreviewProps           │
+├─────────────────────────────────────┤
+│ + content: string                   │
+│ + template: string                  │
+└─────────────────────────────────────┘
+                    │
+                    │ implements
+                    ▼
+┌─────────────────────────────────────┐
+│          <<React.FC>>               │
+│        TemplatePreview              │
+├─────────────────────────────────────┤
+│ - isOpen: boolean                   │
+├─────────────────────────────────────┤
+│ + getTemplateInfo(): TemplateInfo   │
+│ + formatDate(): string              │
+│ + ProfessionalPreview(): JSX.Element│
+│ + ModernPreview(): JSX.Element      │
+│ + CreativePreview(): JSX.Element    │
+│ + render(): JSX.Element             │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│          <<Interface>>              │
+│     TemplateSwitcherProps           │
+├─────────────────────────────────────┤
+│ + currentTemplate: string           │
+│ + coverLetterContent: string        │
+└─────────────────────────────────────┘
+                    │
+                    │ implements
+                    ▼
+┌─────────────────────────────────────┐
+│          <<React.FC>>               │
+│       TemplateSwitcher              │
+├─────────────────────────────────────┤
+│ - isOpen: boolean                   │
+│ - isSwitching: boolean              │
+├─────────────────────────────────────┤
+│ + getTemplateInfo(): TemplateInfo   │
+│ + handleTemplateSwitch(): void      │
+│ + render(): JSX.Element             │
+├─────────────────────────────────────┤
+│ - Uses: Router                      │
+│ - Uses: Toast                       │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│          <<Interface>>              │
+│    TemplateComparisonProps          │
+├─────────────────────────────────────┤
+│ + content: string                   │
+│ + currentTemplate: string           │
+└─────────────────────────────────────┘
+                    │
+                    │ implements
+                    ▼
+┌─────────────────────────────────────┐
+│          <<React.FC>>               │
+│      TemplateComparison             │
+├─────────────────────────────────────┤
+│ + renderTemplatePreview(): JSX.Element│
+│ + render(): JSX.Element             │
+└─────────────────────────────────────┘
+```
+
+### Enhanced UI Component Classes
 
 ```
 ┌─────────────────────────────────────┐
@@ -84,6 +215,7 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 ├─────────────────────────────────────┤
 │ + text: string                      │
 │ + isLoading: boolean                │
+│ + template?: string                 │
 └─────────────────────────────────────┘
                     │
                     │ implements
@@ -95,6 +227,7 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ - textContainerRef: RefObject<HTMLDivElement> │
 ├─────────────────────────────────────┤
 │ + useEffect(): void                 │
+│ + getTemplateStyles(): string       │
 │ + render(): JSX.Element             │
 └─────────────────────────────────────┘
 
@@ -103,6 +236,7 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │      DownloadButtonProps            │
 ├─────────────────────────────────────┤
 │ + content: string                   │
+│ + template: string                  │
 │ + fileName?: string                 │
 └─────────────────────────────────────┘
                     │
@@ -116,12 +250,14 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ - fileName: string                  │
 ├─────────────────────────────────────┤
 │ + generateTxtFile(): void           │
-│ + generatePdfFile(): void           │
-│ + generateDocxFile(): void          │
+│ + generatePdfWithTemplate(): void   │
+│ + generateDocxWithTemplate(): void  │
 │ + handleDownload(): void            │
+│ + applyTemplateFormatting(): void   │
 │ + render(): JSX.Element             │
 ├─────────────────────────────────────┤
 │ - Uses: DocumentUtils               │
+│ - Uses: TemplateEngine              │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -253,6 +389,43 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 
 ┌─────────────────────────────────────┐
 │          <<Interface>>              │
+│     CoverLetterTemplate             │
+├─────────────────────────────────────┤
+│ + id: string                        │
+│ + name: string                      │
+│ + description: string               │
+│ + style: string                     │
+│ + icon: string                      │
+│ + preview: string                   │
+│ + formatting: TemplateFormatting    │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│          <<Interface>>              │
+│      TemplateFormatting             │
+├─────────────────────────────────────┤
+│ + headerStyle: string               │
+│ + bodyStyle: string                 │
+│ + fontFamily: string                │
+│ + fontSize: string                  │
+│ + lineHeight: string                │
+│ + margins: string                   │
+│ + colors: TemplateColors            │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│          <<Interface>>              │
+│        TemplateColors               │
+├─────────────────────────────────────┤
+│ + primary: string                   │
+│ + secondary: string                 │
+│ + text: string                      │
+│ + background: string                │
+│ + accent: string                    │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│          <<Interface>>              │
 │        JobInputData                 │
 ├─────────────────────────────────────┤
 │ + type: "image" | "link"            │
@@ -276,6 +449,7 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 ├─────────────────────────────────────┤
 │ + jobInput: JobInputData            │
 │ + cvInput: CvInputData              │
+│ + template: string                  │
 │ + generationOptions?: GenerationOptions│
 └─────────────────────────────────────┘
 
@@ -284,6 +458,7 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │      CoverLetterResponse            │
 ├─────────────────────────────────────┤
 │ + content: string                   │
+│ + template: string                  │
 │ + metadata: ResponseMetadata        │
 │ + quality: QualityAssessment        │
 └─────────────────────────────────────┘
@@ -296,6 +471,7 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ + processingTime: number            │
 │ + wordCount: number                 │
 │ + jobSource?: string                │
+│ + templateUsed: string              │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -306,6 +482,8 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ + hasLimitedCvInfo: boolean         │
 │ + isJobInfoRelevant: boolean        │
 │ + overallScore: number              │
+│ + jobQualityIndicator: "red"|"yellow"|"green"│
+│ + cvQualityIndicator: "red"|"yellow"|"green" │
 └─────────────────────────────────────┘
 ```
 
@@ -321,17 +499,34 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │      CoverLetterGenerator           │
 ├─────────────────────────────────────┤
 │ - openaiClient: OpenAI              │
+│ - templateEngine: TemplateEngine    │
 ├─────────────────────────────────────┤
 │ + generateFromImage(): Promise<string>│
 │ + generateFromLink(): Promise<string>│
+│ + generateWithTemplate(): Promise<string>│
 │ + extractTextFromImage(): Promise<string>│
 │ + extractTextFromJobLink(): Promise<string>│
 │ + extractTextFromPdf(): Promise<string>│
 │ + extractTextFromDocx(): Promise<string>│
-│ + streamResponse(): ReadableStream  │
+│ + streamResponseWithTemplate(): ReadableStream│
 ├─────────────────────────────────────┤
 │ - Uses: OpenAI API                  │
 │ - Uses: TextExtractionService       │
+│ - Uses: TemplateEngine              │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│          <<Service>>                │
+│        TemplateEngine               │
+├─────────────────────────────────────┤
+│ - templates: CoverLetterTemplate[]  │
+├─────────────────────────────────────┤
+│ + getTemplate(): CoverLetterTemplate│
+│ + getAllTemplates(): CoverLetterTemplate[]│
+│ + applyTemplateFormatting(): string │
+│ + generateTemplateContext(): string │
+│ + switchTemplate(): string          │
+│ + preserveContent(): string         │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -342,6 +537,7 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ + extractFromDocx(): Promise<string>│
 │ + extractFromImage(): Promise<string>│
 │ + extractFromUrl(): Promise<string> │
+│ + assessExtractionQuality(): QualityStatus│
 ├─────────────────────────────────────┤
 │ - Uses: pdf-parse                   │
 │ - Uses: mammoth                     │
@@ -356,6 +552,8 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ + isKnownJobSite(): boolean         │
 │ + extractCompanyFromUrl(): string   │
 │ + calculateQualityScore(): number   │
+│ + getQualityIndicator(): "red"|"yellow"|"green"│
+│ + generateQualityTips(): string[]   │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -366,7 +564,9 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ + normalizedUrl: string             │
 │ + isLikelyJobPosting: boolean       │
 │ + qualityScore: number              │
+│ + qualityIndicator: "red"|"yellow"|"green"│
 │ + potentialIssues: string[]         │
+│ + improvementTips: string[]         │
 └─────────────────────────────────────┘
 ```
 
@@ -387,6 +587,8 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ + assessJobInputQuality(): InputQualityStatus│
 │ + assessCvInputQuality(): InputQualityStatus│
 │ + getQualityTooltipMessage(): string│
+│ + getQualityIndicatorColor(): string│
+│ + generateQualityTips(): string[]   │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -397,6 +599,7 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ + isKnownJobSite(): boolean         │
 │ + extractCompanyFromUrl(): string   │
 │ + normalizeUrl(): string            │
+│ + getSourceQualityScore(): number   │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -415,7 +618,20 @@ The Cover Letter Web App follows a modern React-based architecture with TypeScri
 │ + createPdfDocument(): jsPDF        │
 │ + createDocxDocument(): Document    │
 │ + createTxtFile(): Blob             │
-│ + exportDocument(): void            │
+│ + applyTemplateFormatting(): void   │
+│ + exportDocumentWithTemplate(): void│
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│          <<Constants>>               │
+│      TemplateDefinitions            │
+├─────────────────────────────────────┤
+│ + COVER_LETTER_TEMPLATES: CoverLetterTemplate[]│
+│ + PROFESSIONAL_TEMPLATE: CoverLetterTemplate│
+│ + MODERN_TEMPLATE: CoverLetterTemplate│
+│ + CREATIVE_TEMPLATE: CoverLetterTemplate│
+│ + getTemplateById(): CoverLetterTemplate│
+│ + getDefaultTemplate(): CoverLetterTemplate│
 └─────────────────────────────────────┘
 ```
 
@@ -574,6 +790,7 @@ User Input → Form Component → API Service → External APIs → Response
 // Primary component interfaces used throughout the application
 
 interface CoverLetterFormState {
+  selectedTemplate: string | null;
   jobPosterPreview: string | null;
   cvPreview: string | null;
   coverLetter: string | null;
@@ -593,6 +810,7 @@ interface GenerationRequest {
     source?: string;
   };
   cvContent: string;
+  template: string;
   options?: {
     tone?: string;
     length?: string;
@@ -602,11 +820,34 @@ interface GenerationRequest {
 
 interface GenerationResponse {
   content: string;
+  template: string;
   metadata: {
     processingTime: number;
     wordCount: number;
     qualityAssessment: QualityAssessment;
+    templateApplied: string;
   };
+}
+
+interface TemplateSystemState {
+  selectedTemplate: string;
+  availableTemplates: CoverLetterTemplate[];
+  templatePreviewOpen: boolean;
+  templateSwitchingInProgress: boolean;
+}
+
+interface QualityAssessmentResult {
+  jobQuality: {
+    score: number;
+    indicator: "red" | "yellow" | "green";
+    tips: string[];
+  };
+  cvQuality: {
+    score: number;
+    indicator: "red" | "yellow" | "green";
+    tips: string[];
+  };
+  overallAssessment: "standard" | "job-focused" | "cv-focused" | "generic";
 }
 ```
 
@@ -623,19 +864,29 @@ interface GenerationResponse {
 
 ### Key Architectural Decisions
 
-- **Component-Based Architecture**: Modular, reusable React components
-- **Separation of Concerns**: Clear separation between UI, business logic, and data access
-- **Type Safety**: Comprehensive TypeScript interfaces for all data structures
-- **Service Layer**: Abstracted business logic in service classes
-- **Utility Pattern**: Shared functionality in utility classes
+- **Component-Based Architecture**: Modular, reusable React components with template support
+- **Template System Architecture**: Centralized template management with visual previews and content-preserving switching
+- **Real-time Quality Assessment**: Visual indicators and adaptive feedback for user input optimization
+- **Separation of Concerns**: Clear separation between UI, business logic, template management, and data access
+- **Type Safety**: Comprehensive TypeScript interfaces for all data structures including template definitions
+- **Service Layer**: Abstracted business logic in service classes with template-aware operations
+- **Utility Pattern**: Shared functionality in utility classes including template utilities
 
 ### Technology Integration
 
 - **Frontend**: React 18+ with TypeScript and Next.js 14+
-- **State Management**: React hooks (useState, useEffect, useRef)
-- **Styling**: Tailwind CSS with component variants
-- **File Processing**: Specialized libraries (pdf-parse, mammoth, jsPDF)
-- **API Integration**: OpenAI API with streaming capabilities
-- **Build System**: Next.js with App Router architecture
+- **State Management**: React hooks (useState, useEffect, useRef) with template state management
+- **UI Components**: shadcn/ui components with Tailwind CSS for template styling
+- **Template System**: Custom template engine with real-time preview capabilities
+- **Quality Assessment**: Real-time visual indicators with color-coded feedback
+- **Styling**: Tailwind CSS with component variants and template-specific styles
+- **File Processing**: Specialized libraries (pdf-parse, mammoth, jsPDF) with template-aware formatting
+- **API Integration**: OpenAI API with streaming capabilities and template context
+- **Build System**: Next.js with App Router architecture and template asset optimization
 
-This class diagram documentation provides a comprehensive view of the Cover Letter Web App's object-oriented structure, following RUP methodology for clear architectural documentation and maintainability.
+This class diagram documentation provides a comprehensive view of the Cover Letter Web App's object-oriented structure including the advanced template system, real-time quality assessment, and content-preserving template switching capabilities, following RUP methodology for clear architectural documentation and maintainability.
+
+---
+
+_Document prepared for thesis project using RUP (Rational Unified Process) methodology_  
+_Updated: June 23, 2025 - Reflects current implementation with visual template system, real-time quality assessment, content-preserving template switching, enhanced component architecture, and comprehensive type safety for all template operations_

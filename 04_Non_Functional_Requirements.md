@@ -8,22 +8,28 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 
 ### Response Time Requirements
 
-| Operation               | Target Response Time | Maximum Acceptable |
-| ----------------------- | -------------------- | ------------------ |
-| Page Load               | < 2 seconds          | < 5 seconds        |
-| File Upload             | < 3 seconds          | < 10 seconds       |
-| Image Text Extraction   | < 10 seconds         | < 30 seconds       |
-| URL Content Extraction  | < 5 seconds          | < 15 seconds       |
-| Cover Letter Generation | < 15 seconds         | < 45 seconds       |
-| File Download           | < 2 seconds          | < 5 seconds        |
-| Copy to Clipboard       | < 1 second           | < 2 seconds        |
+| Operation                   | Target Response Time | Maximum Acceptable |
+| --------------------------- | -------------------- | ------------------ |
+| Page Load                   | < 2 seconds          | < 5 seconds        |
+| Template Selection          | < 1 second           | < 3 seconds        |
+| Template Preview            | < 2 seconds          | < 5 seconds        |
+| File Upload                 | < 3 seconds          | < 10 seconds       |
+| Input Quality Assessment    | < 2 seconds          | < 5 seconds        |
+| Image Text Extraction       | < 10 seconds         | < 30 seconds       |
+| URL Content Extraction      | < 5 seconds          | < 15 seconds       |
+| Cover Letter Generation     | < 15 seconds         | < 45 seconds       |
+| Template Switching          | < 3 seconds          | < 8 seconds        |
+| File Download with Template | < 3 seconds          | < 8 seconds        |
+| Copy to Clipboard           | < 1 second           | < 2 seconds        |
 
 ### Throughput Requirements
 
 - **Concurrent Users**: Support minimum 50 concurrent users
-- **File Processing**: Handle up to 100 file uploads per hour
-- **API Calls**: Process up to 500 API requests per hour
-- **Download Operations**: Support 200 downloads per hour
+- **Template Operations**: Handle up to 200 template selections/switches per hour
+- **File Processing**: Handle up to 100 file uploads per hour with quality assessment
+- **API Calls**: Process up to 500 AI generation requests per hour
+- **Download Operations**: Support 200 template-formatted downloads per hour
+- **Preview Operations**: Support 300 template previews per hour
 
 ### Resource Utilization
 
@@ -44,9 +50,12 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 ### User Experience Requirements
 
 - **Learning Curve**: New users should complete first cover letter generation within 5 minutes
+- **Template Navigation**: Users should be able to understand and select templates within 2 minutes
 - **Error Recovery**: Clear error messages with actionable recovery steps
-- **Visual Feedback**: Real-time progress indicators for long operations
-- **Help Documentation**: Contextual help available for all major features
+- **Visual Feedback**: Real-time progress indicators and quality indicators for all operations
+- **Template Switching**: Content-preserving template changes should be intuitive and fast
+- **Quality Guidance**: Adaptive content banners provide helpful tips for input optimization
+- **Help Documentation**: Contextual help available for all major features including template system
 
 ### Input Validation
 
@@ -57,15 +66,20 @@ This document outlines the non-functional requirements for the Cover Letter Web 
   - Images: JPG, PNG, GIF, WEBP
   - Documents: PDF, DOCX
 - **URL Validation**: Support for major job posting sites (JobStreet, LinkedIn, Indeed, etc.)
+- **Template Validation**: Ensure template integrity and proper formatting
+- **Quality Assessment**: Real-time input quality evaluation with visual indicators (green/yellow/red)
+- **Content Preservation**: Validate content integrity during template switching operations
 
 ## Security Requirements
 
 ### Data Protection
 
 - **File Security**: Uploaded files automatically deleted after processing
+- **Template Security**: Secure template data handling and formatting
 - **Data Transmission**: All communications over HTTPS/TLS 1.3
 - **API Security**: Secure API key management for external services
 - **Input Sanitization**: All user inputs validated and sanitized
+- **Content Integrity**: Ensure template switching preserves original content without modification
 
 ### Privacy Requirements
 
@@ -92,13 +106,18 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 
 - **Error Recovery**: Automatic retry for transient failures
 - **Fallback Mechanisms**: Alternative processing methods when primary fails
+- **Template Error Handling**: Graceful degradation if template formatting fails
+- **Quality Assessment Errors**: Fallback to standard generation mode if quality assessment fails
 - **Error Logging**: Comprehensive error tracking for debugging
+- **User Feedback**: Clear error messages with suggested actions for template and quality issues
 
 ### Data Integrity
 
 - **File Validation**: Verify file integrity before processing
 - **Content Accuracy**: Validate extracted text quality
-- **Output Consistency**: Ensure generated content matches input quality
+- **Template Consistency**: Ensure template formatting maintains content integrity
+- **Quality Assessment Accuracy**: Reliable input quality evaluation and feedback
+- **Content Preservation**: Guarantee unchanged content during template switching operations
 
 ## Scalability Requirements
 
@@ -146,9 +165,12 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 
 ### Integration Compatibility
 
-- **AI Services**: Compatible with OpenAI GPT models
-- **File Formats**: Support standard document and image formats
-- **Web Standards**: HTML5, CSS3, JavaScript ES6+ compliance
+- **AI Services**: Compatible with OpenAI GPT models for template-aware generation
+- **Template Systems**: Support for multiple document formatting styles (Professional, Modern, Creative)
+- **File Formats**: Support standard document and image formats with template-specific formatting
+- **Quality Assessment APIs**: Integration with content analysis services
+- **Web Standards**: HTML5, CSS3, JavaScript ES6+ compliance with modern UI frameworks
+- **Real-time Features**: WebSocket or SSE compatibility for streaming and live updates
 
 ## Compliance Requirements
 
@@ -166,16 +188,18 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 
 ## Quality Attributes Summary
 
-| Attribute       | Priority | Measurement         | Target               |
-| --------------- | -------- | ------------------- | -------------------- |
-| Performance     | High     | Response Time       | < 15s for generation |
-| Usability       | High     | User Success Rate   | > 90% first attempt  |
-| Security        | High     | Vulnerability Score | Zero critical issues |
-| Reliability     | Medium   | Uptime              | 99.0% availability   |
-| Scalability     | Medium   | Concurrent Users    | 50+ simultaneous     |
-| Maintainability | Medium   | Code Coverage       | > 80% test coverage  |
+| Attribute        | Priority | Measurement          | Target                        |
+| ---------------- | -------- | -------------------- | ----------------------------- |
+| Performance      | High     | Response Time        | < 15s for generation          |
+| Usability        | High     | User Success Rate    | > 90% first attempt           |
+| Template System  | High     | Template Switch Time | < 3s content-preserving       |
+| Quality Feedback | High     | Assessment Accuracy  | > 95% correct quality ratings |
+| Security         | High     | Vulnerability Score  | Zero critical issues          |
+| Reliability      | Medium   | Uptime               | 99.0% availability            |
+| Scalability      | Medium   | Concurrent Users     | 50+ simultaneous              |
+| Maintainability  | Medium   | Code Coverage        | > 80% test coverage           |
 
 ---
 
 _Document prepared for thesis project using RUP (Rational Unified Process) methodology_  
-_Date: June 9, 2025_
+_Updated: June 23, 2025 - Reflects current implementation with visual template system, real-time quality assessment, content-preserving template switching, and enhanced user experience features_
