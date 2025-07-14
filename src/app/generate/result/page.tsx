@@ -51,8 +51,8 @@ export default function ResultPage() {
   }, [searchParams, router]);
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(coverLetter);
-    toast.success("Copied to clipboard!", {
-      description: "Cover letter content has been copied to your clipboard.",
+    toast.success("Berhasil disalin!", {
+      description: "Konten surat lamaran telah disalin ke clipboard Anda.",
       duration: 2000,
     });
   };
@@ -78,7 +78,7 @@ export default function ResultPage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading your cover letter...</p>
+          <p className="mt-4 text-gray-600">Memuat surat lamaran Anda...</p>
         </div>
       </div>
     );
@@ -109,12 +109,12 @@ export default function ResultPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="mb-1 text-2xl font-bold text-gray-900">
-                Your Cover Letter is Ready!
+                Cover Letter Anda Sudah Siap!
               </h1>
               {templateName && (
                 <p className="text-gray-600">
-                  Generated using the{" "}
-                  <span className="font-medium">{templateName}</span> template
+                  Dibuat menggunakan template{" "}
+                  <span className="font-medium">{templateName}</span>
                 </p>
               )}
             </div>
@@ -198,7 +198,7 @@ export default function ResultPage() {
                 className="flex items-center space-x-1"
               >
                 <Copy className="h-4 w-4" />
-                <span>Copy</span>
+                <span>Salin</span>
               </Button>{" "}
             </div>
           </CardHeader>
@@ -217,7 +217,7 @@ export default function ResultPage() {
             className="flex items-center space-x-2"
           >
             <FileText className="h-4 w-4" />
-            <span>Create Another Cover Letter</span>
+            <span>Buat Cover Letter Lain</span>
           </Button>
 
           {/* <Button
@@ -232,24 +232,24 @@ export default function ResultPage() {
         {/* Tips Section */}
         <Card className="mt-8">
           <CardHeader>
-            <CardTitle className="text-lg">Next Steps</CardTitle>
+            <CardTitle className="text-lg">Langkah Selanjutnya</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
               <div>
-                <h4 className="mb-2 font-medium">Before Sending:</h4>
+                <h4 className="mb-2 font-medium">Sebelum Mengirim:</h4>
                 <ul className="space-y-1 text-gray-600">
-                  <li>• Review and personalize the content</li>
-                  <li>• Check for any specific requirements</li>
-                  <li>• Proofread for errors</li>
+                  <li>• Tinjau dan personalisasi konten</li>
+                  <li>• Periksa persyaratan khusus</li>
+                  <li>• Koreksi kesalahan penulisan</li>
                 </ul>
               </div>
               <div>
-                <h4 className="mb-2 font-medium">Customization Tips:</h4>
+                <h4 className="mb-2 font-medium">Tips Kustomisasi:</h4>
                 <ul className="space-y-1 text-gray-600">
-                  <li>• Add specific company research</li>
-                  <li>• Include relevant achievements</li>
-                  <li>• Match the company&apos;s tone</li>
+                  <li>• Tambahkan riset perusahaan yang spesifik</li>
+                  <li>• Sertakan pencapaian yang relevan</li>
+                  <li>• Sesuaikan dengan kultur perusahaan</li>
                 </ul>
               </div>
             </div>

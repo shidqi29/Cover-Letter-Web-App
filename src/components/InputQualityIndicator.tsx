@@ -38,24 +38,24 @@ const InputQualityIndicator: React.FC<InputQualityIndicatorProps> = ({
     if (type === "job") {
       switch (quality) {
         case "good":
-          return "Job information appears complete";
+          return "Informasi pekerjaan tampak lengkap";
         case "limited":
-          return "Job information may be limited - we'll fill in any gaps";
+          return "Informasi pekerjaan mungkin terbatas - kami akan mengisi celah yang ada";
         case "poor":
-          return "Minimal job information - cover letter will use generic content";
+          return "Informasi pekerjaan minimal - surat lamaran akan menggunakan konten umum";
         default:
-          return "Job input quality unknown";
+          return "Kualitas input pekerjaan tidak diketahui";
       }
     } else {
       switch (quality) {
         case "good":
-          return "CV/Resume information appears complete";
+          return "Informasi CV/Resume tampak lengkap";
         case "limited":
-          return "CV/Resume may have limited information - we'll adapt accordingly";
+          return "CV/Resume mungkin memiliki informasi terbatas - kami akan menyesuaikan";
         case "poor":
-          return "Minimal CV information - cover letter will use generic professional qualities";
+          return "Informasi CV minimal - surat lamaran akan menggunakan kualitas profesional umum";
         default:
-          return "CV input quality unknown";
+          return "Kualitas input CV tidak diketahui";
       }
     }
   };

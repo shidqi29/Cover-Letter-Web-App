@@ -40,7 +40,7 @@ export default function GeneratePage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600">Memuat...</p>
         </div>
       </div>
     );
@@ -65,17 +65,17 @@ export default function GeneratePage() {
             className="mb-4 text-gray-600 hover:text-gray-800"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Templates
+            Kembali ke Template
           </Button>
 
           <div className="text-center">
             <h1 className="mb-2 text-xl font-bold sm:mb-4 sm:text-2xl lg:text-3xl">
-              Generate Cover Letter
+              Buat Cover Letter Anda
             </h1>
             <div className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm text-blue-700">
               <p>
-                Using<span className="ml-1 font-medium">{templateName}</span>{" "}
-                template
+                Menggunakan template
+                <span className="ml-1 font-medium">{templateName}</span>
               </p>
             </div>
           </div>

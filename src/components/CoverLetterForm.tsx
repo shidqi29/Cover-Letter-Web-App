@@ -137,28 +137,28 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
 
       // Validate job inputs based on selected option
       if (jobInputType === "image" && !jobPosterFile) {
-        setError("Please upload a job poster image");
+        setError("Silakan unggah gambar lowongan pekerjaan");
         setLoading(false);
         return;
       }
       if (jobInputType === "link" && (!jobLink || isValidLink === false)) {
         setError(
           jobLink
-            ? "Please enter a valid job link URL"
-            : "Please enter a job link",
+            ? "Silakan masukkan URL link pekerjaan yang valid"
+            : "Silakan masukkan link pekerjaan",
         );
         setLoading(false);
         return;
       } // Validate CV
       if (!cvFile) {
-        setError("Please upload your CV/resume");
+        setError("Silakan unggah CV/resume Anda");
         setLoading(false);
         return;
       }
 
       // Validate template selection
       if (!selectedTemplate) {
-        setError("Please select a cover letter template");
+        setError("Silakan pilih template surat lamaran");
         setLoading(false);
         return;
       }
@@ -175,30 +175,33 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
           // Less than ~50KB
           hasLimitedInputs = true;
           warningMessage +=
-            "The job posting image may have limited information. ";
+            "Gambar lowongan pekerjaan mungkin memiliki informasi terbatas. ";
 
-          toast.warning("Job posting image may have limited information", {
-            description:
-              "We'll create a cover letter but the quality might be affected. Consider uploading a clearer image if available.",
-            duration: 5000,
-          });
+          toast.warning(
+            "Gambar lowongan pekerjaan mungkin memiliki informasi terbatas",
+            {
+              description:
+                "Kami akan membuat surat lamaran tetapi kualitasnya mungkin terpengaruh. Pertimbangkan untuk mengunggah gambar yang lebih jelas jika tersedia.",
+              duration: 5000,
+            },
+          );
         }
       }
 
       if (jobInputType === "link" && jobLink) {
         if (jobSource === "Unknown") {
           hasLimitedInputs = true;
-          warningMessage += "The job link source is unrecognized. ";
+          warningMessage += "Sumber link pekerjaan tidak dikenal. ";
 
-          toast.warning("Unrecognized job posting site", {
+          toast.warning("Situs lowongan pekerjaan tidak dikenal", {
             description:
-              "We'll try our best to extract job details, but the cover letter might be less specific.",
+              "Kami akan berusaha sebaik mungkin untuk mengekstrak detail pekerjaan, tapi surat lamaran mungkin kurang spesifik.",
             duration: 5000,
           });
         } else {
-          toast.info(`Processing job information from ${jobSource}`, {
+          toast.info(`Memproses informasi pekerjaan dari ${jobSource}`, {
             description:
-              "We'll create a cover letter based on the information from this source.",
+              "Kami akan membuat surat lamaran berdasarkan informasi dari sumber ini.",
             duration: 4000,
           });
         }
@@ -209,20 +212,20 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
         // Less than 10KB
         hasLimitedInputs = true;
         warningMessage +=
-          "Your resume file may not contain enough information. ";
+          "File resume Anda mungkin tidak berisi informasi yang cukup. ";
 
-        toast.warning("Resume file may have limited information", {
+        toast.warning("File resume mungkin memiliki informasi terbatas", {
           description:
-            "We'll create a cover letter but it might not be as tailored as possible. Consider providing a more detailed resume.",
+            "Kami akan membuat surat lamaran tetapi mungkin tidak sesuai secara maksimal. Pertimbangkan untuk memberikan resume yang lebih detail.",
           duration: 5000,
         });
       }
 
       // Show a final warning if multiple limited inputs are detected
       if (hasLimitedInputs) {
-        toast.info("Adaptive cover letter generation", {
+        toast.info("Pembuatan surat lamaran adaptif", {
           description:
-            "We'll create the best possible cover letter with the available information, filling in any gaps appropriately.",
+            "Kami akan membuat surat lamaran terbaik dengan informasi yang tersedia, mengisi celah yang ada dengan tepat.",
           duration: 6000,
         });
       }
@@ -271,19 +274,19 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
       // Show appropriate feedback based on generation mode
       if (generationMode !== "standard") {
         let message =
-          "We've adapted your cover letter based on available information.";
+          "Kami telah menyesuaikan surat lamaran berdasarkan informasi yang tersedia.";
         if (generationMode === "job-focused") {
           message =
-            "We've focused on the job requirements and used general professional qualities.";
+            "Kami telah fokus pada persyaratan pekerjaan dan menggunakan kualitas profesional umum.";
         } else if (generationMode === "cv-focused") {
           message =
-            "We've focused on your CV content and used general job qualities.";
+            "Kami telah fokus pada konten CV Anda dan menggunakan kualitas pekerjaan umum.";
         } else if (generationMode === "generic") {
           message =
-            "We've created a generic cover letter with limited personalization.";
+            "Kami telah membuat surat lamaran umum dengan personalisasi terbatas.";
         }
 
-        toast.info("Adaptive content generated", {
+        toast.info("Konten adaptif telah dibuat", {
           description: message,
           duration: 5000,
         });
@@ -314,8 +317,8 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
       }
 
       // Show success notification and redirect to result page
-      toast.success("Cover letter generated successfully!", {
-        description: "Redirecting to your generated cover letter...",
+      toast.success("Surat lamaran berhasil dibuat!", {
+        description: "Mengalihkan ke surat lamaran yang telah dibuat...",
         duration: 2000,
       }); // Encode the cover letter content and redirect to result page
       const encodedContent = encodeURIComponent(accumulatedContent);
@@ -333,7 +336,7 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
       setError(errorMessage);
 
       // Show error notification
-      toast.error("Failed to generate cover letter", {
+      toast.error("Gagal membuat surat lamaran", {
         description: errorMessage,
         duration: 5000,
       });
@@ -376,17 +379,18 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
 
       // Show more specific feedback based on detection
       if (source !== "Unknown") {
-        toast.info(`Detected job posting from ${source}`, {
-          description: "We'll extract job details from this source.",
+        toast.info(`Lowongan pekerjaan terdeteksi dari ${source}`, {
+          description:
+            "Kami akan mengekstrak detail pekerjaan dari sumber ini.",
           duration: 3000,
         });
       } else if (!isLikelyJobPosting && !isKnownJobSite(normalizedUrl)) {
         // Valid URL but might not be a job posting
         const possibleCompany = extractCompanyFromUrl(normalizedUrl);
-        toast.warning("This might not be a job posting URL", {
+        toast.warning("Ini mungkin bukan URL lowongan pekerjaan", {
           description: possibleCompany
-            ? `We detected this might be from ${possibleCompany}. For best results, use direct links to job postings.`
-            : "For best results, use direct links to job postings.",
+            ? `Kami mendeteksi ini mungkin dari ${possibleCompany}. Untuk hasil terbaik, gunakan link langsung ke lowongan pekerjaan.`
+            : "Untuk hasil terbaik, gunakan link langsung ke lowongan pekerjaan.",
           duration: 5000,
         });
       }
@@ -404,19 +408,22 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
     // Check job information quality
     if (jobInputType === "image" && jobPosterPreview) {
       if (jobInputQuality === "limited" || jobInputQuality === "poor") {
-        toast.warning("Job posting image may have limited information", {
-          description:
-            "We'll still generate a cover letter with available information.",
-          duration: 5000,
-        });
+        toast.warning(
+          "Gambar lowongan pekerjaan mungkin memiliki informasi terbatas",
+          {
+            description:
+              "Kami tetap akan membuat surat lamaran dengan informasi yang tersedia.",
+            duration: 5000,
+          },
+        );
         hasWarnings = true;
       }
     }
 
     if (jobInputType === "link" && jobLink && jobSource === "Unknown") {
-      toast.warning("Unrecognized job posting site", {
+      toast.warning("Situs lowongan pekerjaan tidak dikenal", {
         description:
-          "We'll try our best to extract job details, but the cover letter might be less specific.",
+          "Kami akan berusaha sebaik mungkin untuk mengekstrak detail pekerjaan, tapi surat lamaran mungkin kurang spesifik.",
         duration: 5000,
       });
       hasWarnings = true;
@@ -424,9 +431,9 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
 
     // Check CV quality
     if (cvInputQuality === "limited" || cvInputQuality === "poor") {
-      toast.warning("CV/Resume may have limited information", {
+      toast.warning("CV/Resume mungkin memiliki informasi terbatas", {
         description:
-          "We'll create a cover letter but it might not be as tailored as possible.",
+          "Kami akan membuat surat lamaran tetapi mungkin tidak sesuai secara maksimal.",
         duration: 5000,
       });
       hasWarnings = true;
@@ -454,17 +461,17 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
 
   return (
     <Card className="mx-auto w-full max-w-4xl p-3 shadow-lg sm:p-4 lg:p-6">
-      <CardHeader>
+      {/* <CardHeader>
         <CardTitle className="text-lg sm:text-xl lg:text-2xl">
           Generate Cover Letter
         </CardTitle>
-      </CardHeader>
+      </CardHeader> */}
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div className="mb-4">
             <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <Label className="text-base font-semibold sm:text-lg">
-                Job Information Source
+                Sumber Informasi Pekerjaan
               </Label>
               <div className="flex w-full gap-1 rounded-lg bg-slate-100 p-1 sm:w-auto sm:gap-2">
                 <Button
@@ -493,7 +500,7 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
                     <circle cx="9" cy="9" r="2" />
                     <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
                   </svg>
-                  Image
+                  Gambar
                 </Button>
                 <Button
                   type="button"
@@ -530,7 +537,7 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
                 {" "}
                 <div className="mb-2 flex items-center">
                   <Label htmlFor="jobPoster" className="block">
-                    Upload Job Poster Image
+                    Unggah Gambar Lowongan Pekerjaan
                   </Label>
                   {jobPosterPreview && (
                     <InputQualityIndicator
@@ -547,8 +554,8 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
                   className="mb-2"
                 />{" "}
                 <p className="mb-2 text-xs text-gray-500">
-                  Upload an image of the job posting. We&apos;ll extract
-                  relevant information from it.
+                  Unggah gambar lowongan pekerjaan. Kami akan mengekstrak
+                  informasi yang relevan dari gambar tersebut.
                 </p>
                 {jobPosterPreview && (
                   <div className="mt-2 overflow-hidden rounded border">
@@ -569,7 +576,7 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
                 {" "}
                 <div className="mb-2 flex items-center">
                   <Label htmlFor="jobLink" className="block">
-                    Enter Job Link
+                    Masukkan Link Pekerjaan
                   </Label>
                   {jobLink && isValidLink !== null && (
                     <InputQualityIndicator
@@ -581,15 +588,15 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
                 <Input
                   id="jobLink"
                   type="url"
-                  placeholder="https://www.jobstreet.com/job/123456"
+                  placeholder="https://www.jobstreet.co.id/job/123456"
                   value={jobLink}
                   onChange={(e) => setJobLink(e.target.value)}
                   className="mb-2"
                 />{" "}
                 <p className="text-xs text-gray-500">
-                  Paste a link to a job posting from websites like JobStreet,
-                  LinkedIn, Indeed, etc. We&apos;ll extract job details
-                  automatically.
+                  Tempelkan link lowongan pekerjaan dari website seperti
+                  JobStreet, LinkedIn, Indeed, dll. Kami akan mengekstrak detail
+                  pekerjaan secara otomatis.
                 </p>
                 {linkValidating && (
                   <div className="mt-2 flex items-center gap-2">
@@ -612,18 +619,18 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
                       />
                     </svg>
                     <span className="text-sm text-gray-700">
-                      Validating link...
+                      Memvalidasi link...
                     </span>
                   </div>
                 )}
                 {isValidLink === false && (
                   <p className="mt-2 text-sm text-red-500">
-                    Invalid job link. Please enter a valid URL.
+                    Link pekerjaan tidak valid. Silakan masukkan URL yang valid.
                   </p>
                 )}
                 {isValidLink === true && jobSource && (
                   <p className="mt-2 text-sm text-green-500">
-                    Valid job link! Detected source:{" "}
+                    Link pekerjaan valid! Sumber terdeteksi:{" "}
                     <span className="font-semibold">{jobSource}</span>
                   </p>
                 )}
@@ -635,7 +642,7 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
               {" "}
               <div className="mb-2 flex items-center">
                 <Label htmlFor="cv" className="block">
-                  Upload CV/Resume
+                  Unggah CV/Resume
                 </Label>
                 {cvPreview && (
                   <InputQualityIndicator quality={cvInputQuality} type="cv" />
@@ -649,8 +656,8 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
                 className="mb-2"
               />{" "}
               <p className="mb-2 text-xs text-gray-500">
-                Upload your CV/resume in PDF or DOCX format. We&apos;ll match
-                your skills with the job requirements.
+                Unggah CV/resume Anda dalam format PDF atau DOCX. Kami akan
+                mencocokkan keahlian Anda dengan persyaratan pekerjaan.
               </p>{" "}
               {cvPreview && (
                 <div className="mt-2 overflow-hidden rounded border">
@@ -666,10 +673,10 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
           <div className="mb-4">
             <div className="rounded-lg border bg-white p-3 shadow-sm sm:p-4">
               <Label className="mb-2 block text-sm sm:text-base">
-                Select Language
+                Pilih Bahasa
               </Label>
               <RadioGroup
-                defaultValue="english"
+                defaultValue="indonesian"
                 className="flex flex-col gap-2 sm:flex-row sm:gap-4"
               >
                 <div className="flex items-center space-x-2 rounded-md border p-2 hover:bg-slate-50">
@@ -694,10 +701,10 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
               disabled={loading || !selectedTemplate}
             >
               {loading
-                ? "Generating..."
+                ? "Membuat..."
                 : !selectedTemplate
-                  ? "Select Template First"
-                  : "Generate Cover Letter"}
+                  ? "Pilih Template Terlebih Dahulu"
+                  : "Buat Surat Lamaran"}
             </Button>
           </div>
           <ProgressIndicator loading={loading} />
@@ -708,20 +715,20 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
         {/* Input quality assessment status */}
         <div className="mt-4 rounded-lg bg-white p-3 shadow-sm sm:p-4">
           <h4 className="text-sm font-semibold sm:text-base">
-            Input Quality Assessment
+            Penilaian Kualitas Input
           </h4>
           <div className="mt-2 space-y-3">
             {/* Job information quality status */}
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">
-                Job Information Quality:
+                Kualitas Informasi Pekerjaan:
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-sm">
-                  {jobInputQuality === "good" && "Complete"}
-                  {jobInputQuality === "limited" && "Limited"}
+                  {jobInputQuality === "good" && "Lengkap"}
+                  {jobInputQuality === "limited" && "Terbatas"}
                   {jobInputQuality === "poor" && "Minimal"}
-                  {jobInputQuality === "unknown" && "Not provided"}
+                  {jobInputQuality === "unknown" && "Belum diberikan"}
                 </span>
                 <InputQualityIndicator quality={jobInputQuality} type="job" />
               </div>
@@ -729,13 +736,13 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
 
             {/* CV information quality status */}
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">CV/Resume Quality:</span>
+              <span className="text-sm font-medium">Kualitas CV/Resume:</span>
               <div className="flex items-center gap-2">
                 <span className="text-sm">
-                  {cvInputQuality === "good" && "Complete"}
-                  {cvInputQuality === "limited" && "Limited"}
+                  {cvInputQuality === "good" && "Lengkap"}
+                  {cvInputQuality === "limited" && "Terbatas"}
                   {cvInputQuality === "poor" && "Minimal"}
-                  {cvInputQuality === "unknown" && "Not provided"}
+                  {cvInputQuality === "unknown" && "Belum diberikan"}
                 </span>
                 <InputQualityIndicator quality={cvInputQuality} type="cv" />
               </div>
@@ -744,12 +751,14 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
             {/* Validity of job link if using link input */}
             {jobInputType === "link" && (
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Job Link Status:</span>
+                <span className="text-sm font-medium">
+                  Status Link Pekerjaan:
+                </span>
                 <div className="flex items-center gap-2">
                   <span className="text-sm">
-                    {isValidLink === true && "Valid link"}
-                    {isValidLink === false && "Invalid link"}
-                    {isValidLink === null && "Not validated"}
+                    {isValidLink === true && "Link valid"}
+                    {isValidLink === false && "Link tidak valid"}
+                    {isValidLink === null && "Belum divalidasi"}
                   </span>
                   {isValidLink === true && (
                     <CheckCircle className="h-4 w-4 text-green-500" />

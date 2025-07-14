@@ -36,8 +36,8 @@ export default function Home() {
             Cover Letter Generator
           </h1>
           <p className="text-lg text-gray-600">
-            Create professional cover letters tailored to your style and
-            industry
+            Buat cover letter profesional yang sesuai dengan gaya dan industri
+            Anda
           </p>
         </div>
 
@@ -57,8 +57,8 @@ export default function Home() {
               className="px-8 py-3 text-lg"
             >
               {selectedTemplate
-                ? "Continue to Generate"
-                : "Select a Template First"}
+                ? "Lanjutkan untuk Membuat"
+                : "Pilih Template Terlebih Dahulu"}
             </Button>
           </div>
         </div>

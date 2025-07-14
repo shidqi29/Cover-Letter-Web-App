@@ -103,13 +103,13 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
       // Save the PDF
       doc.save(`${fileName}.pdf`);
 
-      toast.success("PDF downloaded successfully", {
-        description: `File saved as ${fileName}.pdf`,
+      toast.success("PDF berhasil diunduh", {
+        description: `File disimpan sebagai ${fileName}.pdf`,
       });
     } catch (error) {
       console.error("Error generating PDF:", error);
-      toast.error("Failed to download as PDF", {
-        description: "Please try again or use a different format",
+      toast.error("Gagal mengunduh sebagai PDF", {
+        description: "Silakan coba lagi atau gunakan format yang berbeda",
       });
     } finally {
       setIsDownloading(false);
@@ -332,14 +332,14 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
       // Generate the DOCX file
       Packer.toBlob(doc).then((blob) => {
         saveAs(blob, `${fileName}.docx`);
-        toast.success("DOCX downloaded successfully", {
-          description: `File saved as ${fileName}.docx`,
+        toast.success("DOCX berhasil diunduh", {
+          description: `File disimpan sebagai ${fileName}.docx`,
         });
       });
     } catch (error) {
       console.error("Error generating DOCX:", error);
-      toast.error("Failed to download as DOCX", {
-        description: "Please try again or use a different format",
+      toast.error("Gagal mengunduh sebagai DOCX", {
+        description: "Silakan coba lagi atau gunakan format yang berbeda",
       });
     } finally {
       setIsDownloading(false);
@@ -613,12 +613,12 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
           {isDownloading ? (
             <>
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600"></div>
-              <span>Downloading...</span>
+              <span>Mengunduh...</span>
             </>
           ) : (
             <>
               <Download className="h-4 w-4" />
-              <span>Download</span>
+              <span>Unduh</span>
               <templateInfo.icon className={`h-3 w-3 ${templateInfo.color}`} />
             </>
           )}
@@ -642,14 +642,14 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
           className="flex items-center space-x-2"
         >
           <FileText className="h-4 w-4" />
-          <span>Download as PDF</span>
+          <span>Unduh sebagai PDF</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={downloadAsDOCX}
           className="flex items-center space-x-2"
         >
           <FileText className="h-4 w-4" />
-          <span>Download as DOCX</span>
+          <span>Unduh sebagai DOCX</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

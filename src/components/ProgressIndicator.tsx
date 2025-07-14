@@ -12,7 +12,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ loading }) => {
         <div className="h-1 animate-progress rounded-full bg-blue-500"></div>
       </div>
       <span className="whitespace-nowrap text-xs text-blue-500 sm:text-sm">
-        Processing...
+        Memproses...
       </span>
     </div>
   );

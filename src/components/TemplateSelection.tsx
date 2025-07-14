@@ -52,10 +52,11 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
     <div className="space-y-4">
       <div>
         <h2 className="mb-2 text-lg font-semibold">
-          Choose Your Cover Letter Template
+          Pilih Template Cover Letter Anda
         </h2>
         <p className="text-sm text-gray-600">
-          Select a template that best fits your industry and personal style.
+          Pilih template yang paling sesuai dengan industri dan gaya pribadi
+          Anda.
         </p>
       </div>{" "}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -114,7 +115,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     {/* Template Preview */}
                     <div className="space-y-2">
                       <div className="text-xs font-medium text-gray-700">
-                        Preview:
+                        Pratinjau:
                       </div>
                       <TemplatePreviewCard
                         templateType={
@@ -127,7 +128,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
                     </div>
 
                     <div className="rounded border-l-2 border-gray-300 bg-gray-50 p-2 text-xs text-gray-500">
-                      <strong>Best for:</strong> {template.preview}
+                      <strong>Cocok untuk:</strong> {template.preview}
                     </div>
                   </div>
                 </CardContent>
@@ -141,7 +142,7 @@ const TemplateSelection: React.FC<TemplateSelectionProps> = ({
           <div className="flex items-center space-x-2">
             <Check className="h-4 w-4 text-green-600" />
             <span className="text-sm font-medium text-green-800">
-              Template selected:{" "}
+              Template dipilih:{" "}
               {templates.find((t) => t.id === selectedTemplate)?.name}
             </span>
           </div>
