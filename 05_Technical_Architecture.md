@@ -2,171 +2,291 @@
 
 ## RUP (Rational Unified Process) Methodology
 
-This document outlines the technical architecture for the Cover Letter Web Application, following RUP methodology standards.
+This document outlines the technical architecture for the Cover Letter Web Application, following RUP methodology standards and reflecting the current implementation.
 
 ## System Architecture Overview
 
 ### Architecture Pattern
 
-The application follows a **Three-Tier Architecture** pattern:
+The application follows a **Modern Full-Stack Architecture** with these key patterns:
 
-1. **Presentation Tier**: React-based frontend with Next.js framework
-2. **Business Logic Tier**: Next.js API routes with server-side processing
-3. **Data Tier**: External APIs and temporary file storage
+1. **Presentation Layer**: React-based frontend with Next.js App Router
+2. **API Layer**: Next.js API routes with serverless functions
+3. **Service Layer**: External AI services and document processing utilities
+4. **Client-Side Processing**: Enhanced browser-based file handling and validation
 
-### Deployment Architecture
+### High-Level Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Client Browser                          │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │             React Frontend                          │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │ Template    │ │ Quality     │ │ Download    │   │   │
-│  │  │ System      │ │ Indicators  │ │ Components  │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │ File Upload │ │ Streaming   │ │ Template    │   │   │
-│  │  │ Components  │ │ Text        │ │ Switcher    │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                           HTTPS/TLS
-                              │
-┌─────────────────────────────────────────────────────────────┐
-│                   Next.js Server                            │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │               API Routes                            │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │ /generate   │ │ /validate   │ │ /download   │   │   │
-│  │  │ endpoint    │ │ endpoint    │ │ endpoint    │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │             Utility Libraries                       │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │ Template    │ │ Quality     │ │ Document    │   │   │
-│  │  │ Engine      │ │ Assessment  │ │ Generation  │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │ File        │ │ Link        │ │ Content     │   │   │
-│  │  │ Processing  │ │ Validation  │ │ Validation  │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                         External APIs
-                              │
-┌─────────────────────────────────────────────────────────────┐
-│                   External Services                         │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │               OpenAI API                            │   │
-│  │  ┌─────────────┐ ┌─────────────┐                   │   │
-│  │  │ Text        │ │ Template-   │                   │   │
-│  │  │ Extraction  │ │ Aware       │                   │   │
-│  │  │ & OCR       │ │ Generation  │                   │   │
-│  │  └─────────────┘ └─────────────┘                   │   │
-│  └─────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         Client Browser                                  │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │                    React Frontend (Next.js 13)                  │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │   │
+│  │  │ Template    │ │ Generation  │ │ Result      │ │ Download    │ │   │
+│  │  │ Selection   │ │ Form        │ │ Display     │ │ Components  │ │   │
+│  │  │ & Preview   │ │ Components  │ │ & Switcher  │ │             │ │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │   │
+│  │  │ File Upload │ │ Quality     │ │ Progress    │ │ Streaming   │ │   │
+│  │  │ & Preview   │ │ Indicators  │ │ Tracking    │ │ Display     │ │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │   │
+│  │  ┌─────────────────────────────────────────────────────────────┐ │   │
+│  │  │             State Management (React Hooks)                  │ │   │
+│  │  │ • Template Selection State  • File Processing State        │ │   │
+│  │  │ • Quality Assessment State  • Generation Progress State    │ │   │
+│  │  └─────────────────────────────────────────────────────────────┘ │   │
+│  └─────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    │
+                               HTTPS/TLS 1.3
+                                    │
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        Next.js Server (Vercel/Node.js)                 │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │                      API Routes Layer                           │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │   │
+│  │  │ /generate   │ │ File        │ │ Quality     │ │ Template    │ │   │
+│  │  │ Endpoint    │ │ Processing  │ │ Assessment  │ │ Switching   │ │   │
+│  │  │ (Streaming) │ │ APIs        │ │ APIs        │ │ APIs        │ │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │   │
+│  └─────────────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │                    Service Layer                                │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │   │
+│  │  │ Template    │ │ Document    │ │ Quality     │ │ AI Content  │ │   │
+│  │  │ Engine      │ │ Processing  │ │ Assessment  │ │ Generation  │ │   │
+│  │  │ System      │ │ (PDF/DOCX)  │ │ Engine      │ │ Service     │ │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │   │
+│  │  │ Link        │ │ Content     │ │ File        │ │ Streaming   │ │   │
+│  │  │ Validation  │ │ Validation  │ │ Upload      │ │ Response    │ │   │
+│  │  │ Service     │ │ Service     │ │ Handler     │ │ Manager     │ │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │   │
+│  └─────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    │
+                           External Service APIs
+                                    │
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          External Services                              │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │                       OpenAI API                                │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │   │
+│  │  │ GPT-4       │ │ Vision API  │ │ Web Search  │ │ Chat        │ │   │
+│  │  │ Text        │ │ (Image OCR  │ │ (Job URL    │ │ Completions │ │   │
+│  │  │ Generation  │ │ Processing) │ │ Processing) │ │ Streaming   │ │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │   │
+│  └─────────────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │                    Job Posting Websites                         │   │
+│  │  LinkedIn • Indeed • JobStreet • Glassdoor • Company Websites   │   │
+│  └─────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Component Architecture
 
 ### Frontend Components
 
-#### 1. Core Components
+#### 1. Page Components
 
-- **`CoverLetterForm`**: Main form component handling user inputs and template selection
-- **`TemplateSelection`**: Template selection interface with preview capabilities
-- **`TemplatePreview`**: Template preview dialog with sample formatting
-- **`TemplateSwitcher`**: Content-preserving template switching component
-- **`TemplatePreviewCard`**: Individual template preview cards
-- **`DownloadButton`**: File download functionality with template-aware formatting
-- **`StreamingText`**: Real-time display of AI-generated content
-- **`InputQualityIndicator`**: Visual quality assessment indicators (red/yellow/green)
-- **`AdaptiveContentBanner`**: Dynamic content tips based on input quality
-- **`ProgressIndicator`**: Enhanced progress tracking for generation process
+- **`page.tsx` (Homepage)**: Template selection interface with CDC branding
+- **`generate/page.tsx`**: Generation form with template context
+- **`generate/result/page.tsx`**: Result display with template switching capabilities
+- **`layout.tsx`**: Root layout with global styles and metadata
 
-#### 2. Layout Components
+#### 2. Core Form Components
 
-- **`Header`**: Application header with navigation
-- **`Footer`**: Application footer with links
-- **`Layout`**: Main layout wrapper component
+- **`CoverLetterForm`**: Main generation form with dual input methods (image/URL)
+- **`TemplateSelection`**: Interactive template selection with visual previews
+- **`TemplatePreview`**: Modal component showing detailed template formatting
+- **`TemplatePreviewCard`**: Individual template cards with style indicators
+- **`TemplateSwitcher`**: Result page template switching with content preservation
+- **`TemplateComparison`**: Side-by-side template comparison functionality
 
-#### 3. Utility Components
+#### 3. Input & Quality Components
 
-- **`ErrorBoundary`**: Error handling and display
-- **`LoadingSpinner`**: Loading state indicators
-- **`Toast`**: Notification system for template switches and operations
+- **`InputQualityIndicator`**: Visual status indicators (Good/Fair/Poor/Unknown)
+- **`AdaptiveContentBanner`**: Dynamic quality tips and recommendations
+- **`ProgressIndicator`**: Multi-stage progress tracking with visual feedback
+- **`StreamingText`**: Real-time text display with typewriter effect
 
-### Backend Components
+#### 4. Output & Download Components
 
-#### 1. API Routes
+- **`DownloadButton`**: Multi-format download with template-specific styling
+- **File generation utilities**: PDF and DOCX creation with template formatting
+
+#### 5. UI Components (shadcn/ui based)
+
+- **`Button`**: Consistent button styling with variants
+- **`Card`**: Content containers for templates and information
+- **`Dialog`**: Modal dialogs for previews and confirmations
+- **`Input`**: Form input components with validation states
+- **`RadioGroup`**: Input method selection (Image/URL)
+- **`Badge`**: Status indicators and labels
+- **`Tooltip`**: Contextual help and information
+
+### Backend Architecture
+
+#### 1. API Routes Structure
 
 ```typescript
-/api/generate          // Main cover letter generation endpoint with template support
-/api/validate          // Input validation and quality assessment endpoint
-/api/download          // Template-aware file download endpoint
-/api/health           // Health check endpoint
+/api/generate/route.ts    // Main generation endpoint with streaming
+├── POST: Generate cover letter
+├── Handles: Image OCR, URL scraping, CV parsing
+├── Returns: Streaming text response
+└── Features: Quality assessment, template-aware generation
+
+/api/helpers/             // Helper API endpoints (if needed)
+├── URL validation
+├── File processing status
+└── Quality assessment endpoints
 ```
 
-#### 2. Core Libraries
+#### 2. Core Service Libraries
 
-- **`document-utils.ts`**: Document processing, generation utilities, and quality assessment
-- **`link-validation.ts`**: Job link validation and source detection
-- **`templates.ts`**: Template definitions and formatting logic
-- **`utils.ts`**: General utility functions and helpers
+**`src/lib/document-utils.ts`**
+
+- File processing and text extraction
+- Quality assessment algorithms
+- Smart filename generation
+- Template-aware content formatting
+
+**`src/lib/link-validation.ts`**
+
+- Real-time URL validation
+- Job site source detection
+- Link format verification
+- Platform compatibility checking
+
+**`src/types/templates.ts`**
+
+- Template type definitions
+- Template configuration objects
+- Style and formatting specifications
+
+**`src/lib/utils.ts`**
+
+- General utility functions
+- Class name utilities (clsx/tailwind-merge)
+- Common helper functions
+
+#### 3. Document Processing Pipeline
+
+```typescript
+// Image Processing Flow
+Image Upload → File Validation → Base64 Conversion → OpenAI Vision API → Text Extraction
+
+// URL Processing Flow
+URL Input → Format Validation → Source Detection → OpenAI Web Search → Content Extraction
+
+// CV Processing Flow
+CV Upload → Format Detection → PDF/DOCX Parser → Text Extraction → Quality Assessment
+
+// Generation Flow
+Extracted Data → Quality Analysis → Template Context → OpenAI Generation → Streaming Response
+```
+
+### Template System Architecture
+
+#### 1. Template Definition Structure
+
+```typescript
+interface CoverLetterTemplate {
+  id: string;                    // 'professional' | 'modern' | 'creative'
+  name: string;                 // Display name
+  description: string;          // Template description
+  preview: string;              // Preview text
+  style: 'professional' | 'creative' | 'modern';
+}
+```
+
+#### 2. Template Processing Flow
+
+```
+Template Selection → Context Preservation → AI Generation with Template Instructions →
+Formatting Application → Document Generation → Template Switching Support
+```
+
+#### 3. Template-Specific Features
+
+- **Professional Template**: Traditional business formatting, formal tone, structured layout
+- **Modern Template**: Contemporary design, balanced tone, clean formatting
+- **Creative Template**: Expressive styling, personality-focused, industry-adapted formatting
 
 ## Data Flow Architecture
 
-### Request Processing Flow
+### Complete User Journey Data Flow
 
 ```
-Template Selection → User Input → Validation → Processing → AI Generation → Template Application → Response
-        │               │           │            │            │                  │                │
-        ▼               ▼           ▼            ▼            ▼                  ▼                ▼
-   ┌─────────┐     ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐        ┌─────────┐      ┌─────────┐
-   │Template │     │File/URL │ │Quality  │ │Content  │ │OpenAI   │        │Template │      │Streaming│
-   │Preview  │     │Upload   │ │Check &  │ │Extract  │ │API Call │        │Format   │      │Response │
-   │& Select │     │         │ │Indicate │ │         │ │w/Template│       │Apply    │      │w/Style  │
-   └─────────┘     └─────────┘ └─────────┘ └─────────┘ └─────────┘        └─────────┘      └─────────┘
+Homepage Load → Template Selection → Form Load → Input Processing →
+Quality Assessment → Generation → Streaming Display → Template Operations → Download
+      │               │              │               │                │              │
+      ▼               ▼              ▼               ▼                ▼              ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│Template     │ │Template     │ │File/URL     │ │Content      │ │OpenAI API   │ │Document     │
+│Cards        │ │Preview      │ │Validation   │ │Extraction   │ │Generation   │ │Generation   │
+│Display      │ │Modal        │ │& Quality    │ │& Quality    │ │with Template│ │with Template│
+│             │ │             │ │Assessment   │ │Analysis     │ │Context      │ │Formatting   │
+└─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘
 ```
 
-### Data Processing Pipeline
+### Request Processing Pipeline
 
-1. **Template Selection**
+1. **Template Selection Phase**
 
-   - Display template options (Professional, Modern, Creative)
-   - Preview template formatting
-   - Store template choice for generation context
+   - Load template definitions from `types/templates.ts`
+   - Display interactive template cards with previews
+   - Handle template preview modal display
+   - Store selected template in URL parameters
 
-2. **Input Reception**
+2. **Input Collection Phase**
 
-   - File upload handling with progress indicators
-   - URL validation with real-time feedback
-   - Format verification with quality assessment
+   - Render generation form with selected template context
+   - Handle dual input methods (image upload vs URL input)
+   - Perform real-time validation and quality assessment
+   - Display visual quality indicators and adaptive guidance
 
-3. **Quality Assessment & Visual Feedback**
+3. **Processing Phase**
+
+   - Extract content from images using OpenAI Vision API
+   - Extract job information from URLs using OpenAI Web Search
+   - Parse CV documents using PDF/DOCX libraries
+   - Assess overall input quality and provide feedback
+
+4. **Generation Phase**
+
+   - Combine extracted data with template-specific instructions
+   - Call OpenAI API with streaming enabled
+   - Display real-time generation progress
+   - Apply template-specific formatting and styling
+
+5. **Output Phase**
+
+   - Display generated content with template styling
+   - Enable template switching with content preservation
+   - Provide multi-format download options
+   - Generate smart filenames based on content analysis
 
    - Real-time input quality analysis
    - Color-coded indicators (green/yellow/red)
    - Adaptive content banners with improvement tips
    - Generation mode selection based on quality
 
-4. **Content Extraction**
+6. **Content Extraction**
 
    - Image text extraction via OCR
    - PDF/DOCX text parsing
    - Web content scraping with source detection
 
-5. **Template-Aware AI Processing**
+7. **Template-Aware AI Processing**
 
    - Template-specific prompt engineering
    - OpenAI API integration with template context
    - Response streaming with formatting
 
-6. **Template Application & Output Generation**
+8. **Template Application & Output Generation**
    - Apply selected template styling to content
    - Template-specific formatting for downloads
    - Content-preserving template switching capability

@@ -2,7 +2,7 @@
 
 ## RUP (Rational Unified Process) Methodology
 
-This document contains activity diagrams for the Cover Letter Web Application, following RUP methodology standards.
+This document contains activity diagrams for the Cover Letter Web Application, following RUP methodology standards and reflecting the current implementation.
 
 ## Legend
 
@@ -22,9 +22,10 @@ This document contains activity diagrams for the Cover Letter Web Application, f
 └─ ─ ─ ─ ─┘
 
 →              Control Flow
+[condition]    Guard Condition
 ```
 
-## Main Activity Diagram: Cover Letter Generation Process with Template System
+## Primary Activity Diagram: Complete Cover Letter Generation Process
 
 ```
                              ●
@@ -37,7 +38,7 @@ This document contains activity diagrams for the Cover Letter Web Application, f
                     ┌────────▼────────┐
                     │  Display        │
                     │  Template       │
-                    │  Selection      │
+                    │  Selection Page │
                     └────────┬────────┘
                              │
                           ◇──┴──◇
@@ -47,19 +48,36 @@ This document contains activity diagrams for the Cover Letter Web Application, f
               ┌────────▼────────┐  ┌────────▼────────┐
               │  Show Template  │  │  Select         │
               │  Preview Dialog │  │  Template       │
+              │  with Mock      │  │  (Professional, │
+              │  Content        │  │  Modern, or     │
+              │                 │  │  Creative)      │
               └────────┬────────┘  └────────┬────────┘
                        │                    │
                        └──────┬─────────────┘
                               │
                     ┌────────▼────────┐
-                    │  Navigate to    │
-                    │  Generation     │
-                    │  Form           │
+                    │  Enable         │
+                    │  Continue       │
+                    │  Button         │
                     └────────┬────────┘
                              │
                     ┌────────▼────────┐
-                    │  Select Input   │
-                    │  Method         │
+                    │  Navigate to    │
+                    │  Generation     │
+                    │  Form with      │
+                    │  Template Param │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │  Display Form   │
+                    │  with Selected  │
+                    │  Template Info  │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │  Select Job     │
+                    │  Input Method   │
+                    │  (Radio Group)  │
                     └────────┬────────┘
                              │
                           ◇──┴──◇
@@ -69,35 +87,163 @@ This document contains activity diagrams for the Cover Letter Web Application, f
               ┌────────▼────────┐  ┌────────▼────────┐
               │  Upload Job     │  │  Enter Job      │
               │  Poster Image   │  │  Posting URL    │
+              │  (JPG/PNG)      │  │  in Text Field  │
               └────────┬────────┘  └────────┬────────┘
                        │                    │
                ┌─ ─ ─ ─▼─ ─ ─ ─┐    ┌─ ─ ─ ─▼─ ─ ─ ─┐
-               │ Validate Image │    │ Validate URL  │
-               │ Quality & Show │    │ Format & Show │
-               │ Indicator      │    │ Indicator     │
+               │ Process Image  │    │ Validate URL  │
+               │ - File Size    │    │ - Format Check│
+               │ - Format Check │    │ - Real-time   │
+               │ - Quality      │    │ - Source      │
+               │   Assessment   │    │   Detection   │
+               └─ ─ ─ ─┬─ ─ ─ ─┘    └─ ─ ─ ─┬─ ─ ─ ─┘
+                       │                    │
+               ┌─ ─ ─ ─▼─ ─ ─ ─┐    ┌─ ─ ─ ─▼─ ─ ─ ─┐
+               │ Display Image │    │ Display URL   │
+               │ Quality       │    │ Validation    │
+               │ Indicator     │    │ Status &      │
+               │ (Good/Fair/   │    │ Job Source    │
+               │  Poor)        │    │ (LinkedIn/    │
+               │               │    │  Indeed/etc.) │
                └─ ─ ─ ─┬─ ─ ─ ─┘    └─ ─ ─ ─┬─ ─ ─ ─┘
                        │                    │
                        └──────┬─────────────┘
                               │
                     ┌────────▼────────┐
                     │  Upload CV      │
-                    │  File           │
+                    │  File (PDF/     │
+                    │  DOCX)          │
                     └────────┬────────┘
                              │
                     ┌─ ─ ─ ─▼─ ─ ─ ─┐
-                    │ Validate CV    │
-                    │ Quality & Show │
-                    │ Indicator      │
+                    │ Process CV     │
+                    │ - Format Check │
+                    │ - Size Check   │
+                    │ - Content      │
+                    │   Analysis     │
                     └─ ─ ─ ─┬─ ─ ─ ─┘
                              │
                     ┌─ ─ ─ ─▼─ ─ ─ ─┐
-                    │ Display        │
+                    │ Display CV     │
                     │ Quality        │
-                    │ Assessment     │
+                    │ Indicator      │
+                    │ (Good/Fair/    │
+                    │  Poor)         │
+                    └─ ─ ─ ─┬─ ─ ─ ─┘
+                             │
+                    ┌─ ─ ─ ─▼─ ─ ─ ─┐
+                    │ Show Overall   │
+                    │ Quality        │
+                    │ Assessment &   │
+                    │ Adaptive       │
+                    │ Content Banner │
                     └─ ─ ─ ─┬─ ─ ─ ─┘
                              │
                     ┌────────▼────────┐
                     │  Select         │
+                    │  Language       │
+                    │  (English/      │
+                    │  Bahasa)        │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │  Click Generate │
+                    │  Cover Letter   │
+                    │  Button         │
+                    └────────┬────────┘
+                             │
+                    ┌─ ─ ─ ─▼─ ─ ─ ─┐
+                    │ Display        │
+                    │ Progress       │
+                    │ Indicator      │
+                    └─ ─ ─ ─┬─ ─ ─ ─┘
+                             │
+                          ◇──┴──◇
+                         /      \
+                    [Image]    [Link]
+                       /          \
+              ┌─ ─ ─ ─▼─ ─ ─ ─┐  ┌─ ─ ─ ─▼─ ─ ─ ─┐
+              │ Extract Text   │  │ Extract Job   │
+              │ from Image     │  │ Info from URL │
+              │ using OpenAI   │  │ using OpenAI  │
+              │ Vision API     │  │ Web Search    │
+              └─ ─ ─ ─┬─ ─ ─ ─┘  └─ ─ ─ ─┬─ ─ ─ ─┘
+                       │                  │
+                       └──────┬───────────┘
+                              │
+                    ┌─ ─ ─ ─▼─ ─ ─ ─┐
+                    │ Extract Text   │
+                    │ from CV using  │
+                    │ PDF/DOCX       │
+                    │ Parsers        │
+                    └─ ─ ─ ─┬─ ─ ─ ─┘
+                             │
+                    ┌─ ─ ─ ─▼─ ─ ─ ─┐
+                    │ Analyze        │
+                    │ Content        │
+                    │ Quality &      │
+                    │ Relevance      │
+                    └─ ─ ─ ─┬─ ─ ─ ─┘
+                             │
+                    ┌─ ─ ─ ─▼─ ─ ─ ─┐
+                    │ Generate       │
+                    │ Cover Letter   │
+                    │ using OpenAI   │
+                    │ with Template  │
+                    │ Instructions   │
+                    └─ ─ ─ ─┬─ ─ ─ ─┘
+                             │
+                    ┌─ ─ ─ ─▼─ ─ ─ ─┐
+                    │ Stream         │
+                    │ Generated      │
+                    │ Content in     │
+                    │ Real-time      │
+                    └─ ─ ─ ─┬─ ─ ─ ─┘
+                             │
+                    ┌────────▼────────┐
+                    │  Display        │
+                    │  Generated      │
+                    │  Cover Letter   │
+                    │  in Template    │
+                    │  Style          │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │  Show Download  │
+                    │  Options &      │
+                    │  Template       │
+                    │  Switcher       │
+                    └────────┬────────┘
+                             │
+                          ◇──┴──◇
+                         /      \
+                [Switch Template] [Download]
+                       /          \
+              ┌────────▼────────┐  ┌────────▼────────┐
+              │  Open Template  │  │  Select Format  │
+              │  Switcher       │  │  (PDF/DOCX)     │
+              │  Dialog         │  │                 │
+              └────────┬────────┘  └────────┬────────┘
+                       │                    │
+              ┌────────▼────────┐  ┌─ ─ ─ ─▼─ ─ ─ ─┐
+              │  Select New     │  │ Generate       │
+              │  Template &     │  │ Document with  │
+              │  Apply to       │  │ Template-      │
+              │  Existing       │  │ specific       │
+              │  Content        │  │ Formatting     │
+              └────────┬────────┘  └─ ─ ─ ─┬─ ─ ─ ─┘
+                       │                    │
+                       │           ┌─ ─ ─ ─▼─ ─ ─ ─┐
+                       │           │ Download File  │
+                       │           │ with Smart     │
+                       │           │ Filename       │
+                       │           └─ ─ ─ ─┬─ ─ ─ ─┘
+                       │                    │
+                       └──────┬─────────────┘
+                              │
+                             ◐
+```
+
                     │  Language       │
                     └────────┬────────┘
                              │
@@ -175,11 +321,13 @@ This document contains activity diagrams for the Cover Letter Web Application, f
              └────────┬────────┘
                       │
                      ◐
+
 ```
 
 ## Activity Diagram: Template Selection and Preview Process
 
 ```
+
                              ●
                              │
                     ┌────────▼────────┐
@@ -241,11 +389,13 @@ This document contains activity diagrams for the Cover Letter Web Application, f
                └────────┬────────┘
                         │
                        ◐
+
 ```
 
 ## Activity Diagram: Template Switching Process
 
 ```
+
                              ●
                              │
                     ┌────────▼────────┐
@@ -314,11 +464,13 @@ This document contains activity diagrams for the Cover Letter Web Application, f
                        └──────┬─────────────┘
                               │
                              ◐
+
 ```
 
 ## Detailed Activity Diagram: Input Quality Assessment with Visual Indicators
 
 ```
+
                              ●
                              │
                     ┌────────▼────────┐
@@ -420,11 +572,13 @@ This document contains activity diagrams for the Cover Letter Web Application, f
                    └────────┬────────┘
                             │
                            ◐
+
 ```
 
 ## Activity Diagram: Error Handling Workflow
 
 ```
+
                              ●
                              │
                     ┌────────▼────────┐
@@ -467,11 +621,13 @@ This document contains activity diagrams for the Cover Letter Web Application, f
                                                 └────────┬────────┘
                                                          │
                                                         ◐
+
 ```
 
 ## Activity Diagram: Download Process with Template Formatting
 
 ```
+
                              ●
                              │
                     ┌────────▼────────┐
@@ -528,6 +684,7 @@ This document contains activity diagrams for the Cover Letter Web Application, f
                      └──────┬────────────┘
                             │
                            ◐
+
 ```
 
 ## Flow Descriptions
@@ -573,5 +730,6 @@ This document contains activity diagrams for the Cover Letter Web Application, f
 
 ---
 
-_Document prepared for thesis project using RUP (Rational Unified Process) methodology_  
+_Document prepared for thesis project using RUP (Rational Unified Process) methodology_
 _Updated: June 23, 2025 - Reflects current implementation with visual template system, real-time quality indicators, content-preserving template switching, and enhanced user experience workflows_
+```

@@ -2,102 +2,232 @@
 
 ## RUP (Rational Unified Process) Methodology
 
-This document contains sequence diagrams for the Cover Letter Web Application, following RUP methodology standards. These diagrams illustrate the interaction between system components over time.
+This document contains sequence diagrams for the Cover Letter Web Application, following RUP methodology standards and reflecting the current implementation architecture.
 
 ## Legend
 
 ```
 Actor/Object     Message/Call           Return/Response
-┌─────────┐      ────────────────►      ◄────────────────
-│         │      Synchronous Call      Synchronous Return
-│ Entity  │
-└─────────┘      ┌ ─ ─ ─ ─ ─ ─ ─►      ◄─ ─ ─ ─ ─ ─ ─ ┐
-     │           │ Asynchronous Call    Asynchronous Return
+┌─────────────┐  ────────────────►      ◄────────────────
+│             │  Synchronous Call      Synchronous Return
+│ Entity/     │
+│ Component   │  ┌ ─ ─ ─ ─ ─ ─ ─►      ◄─ ─ ─ ─ ─ ─ ─ ┐
+└─────────────┘  │ Async/Stream Call    Async/Stream Return
      │
-     │           ────────────────►
-     ▼           Self Call/Loop
+     │           ────────────────►      Loop/Self Call
+     ▼           Self Operation
 ```
 
 ## Primary Sequence Diagrams
 
-### 1. Template Selection and Cover Letter Generation Process
+### 1. Complete Cover Letter Generation Flow with Template System
 
 ```
-Job Seeker    Template UI     Quality Indicator    API Route    Template Engine    OpenAI API
-    │             │              │                    │               │               │
-    │ Access App   │              │                    │               │               │
-    ├─────────────►│              │                    │               │               │
-    │             │ Show Templates│                    │               │               │
-    │             ├─────────────►│                    │               │               │
-    │             │ Template Options                   │               │               │
-    │             ◄─────────────┤                    │               │               │
-    │ Preview Template           │                    │               │               │
-    ├─────────────►│              │                    │               │               │
-    │             │ Show Preview Dialog                │               │               │
-    │             ├─────────────►│                    │               │               │
-    │             │ Template Preview                   │               │               │
-    │             ◄─────────────┤                    │               │               │
-    │ Select Template            │                    │               │               │
-    ├─────────────►│              │                    │               │               │
-    │             │ Navigate to Generation Form       │               │               │
-    │             ├─────────────►│                    │               │               │
-    │             │              │                    │               │               │
-    │ Upload Image │              │                    │               │               │
-    ├─────────────►│              │                    │               │               │
-    │             │ Assess Quality│                    │               │               │
-    │             ├─────────────►│                    │               │               │
-    │             │ Quality Score (Green/Yellow/Red)   │               │               │
-    │             ◄─────────────┤                    │               │               │
-    │ Show Quality Indicator     │                    │               │               │
-    ◄─────────────┤              │                    │               │               │
-    │             │              │                    │               │               │
-    │ Upload CV    │              │                    │               │               │
-    ├─────────────►│              │                    │               │               │
-    │             │ Assess CV Quality                  │               │               │
-    │             ├─────────────►│                    │               │               │
-    │             │ CV Quality Score                   │               │               │
-    │             ◄─────────────┤                    │               │               │
-    │ Show CV Quality Indicator  │                    │               │               │
-    ◄─────────────┤              │                    │               │               │
-    │             │              │                    │               │               │
-    │ Click Generate              │                    │               │               │
-    ├─────────────►│              │                    │               │               │
-    │             │ POST /api/generate with template   │               │               │
-    │             ├─────────────────────────────────►│               │               │
-    │             │              │                    │ Get Template Context          │
-    │             │              │                    ├──────────────►│               │
-    │             │              │                    │ Template Info │               │
-    │             │              │                    ◄──────────────┤               │
-    │             │              │                    │ Generate with Template Context│
-    │             │              │                    ├─────────────────────────────►│
-    │             │              │                    │ Stream Template-Aware Content │
-    │             │              │                    ◄┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┤
-    │             │ Stream with Template Styling      │               │               │
-    │             ◄┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐ ┤               │               │
-    │ Display Styled Content     │                    │               │               │
-    ◄┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐│              │                    │               │               │
-    │             │              │                    │               │               │
+Job Seeker    Homepage    Template     Generation    Quality        API           OpenAI        Document
+              Component   Selection    Form         Assessment     Route         Service       Generator
+    │            │           │           │              │             │             │             │
+    │ Access App │           │           │              │             │             │             │
+    ├───────────►│           │           │              │             │             │             │
+    │            │ Load Templates        │              │             │             │             │
+    │            ├──────────►│           │              │             │             │             │
+    │            │ Display Template Cards│              │             │             │             │
+    │            ◄──────────┤           │              │             │             │             │
+    │ Preview Template       │           │              │             │             │             │
+    ├───────────►│           │           │              │             │             │             │
+    │            │ Show Preview Modal    │              │             │             │             │
+    │            ├──────────►│           │              │             │             │             │
+    │            │ Template Preview      │              │             │             │             │
+    │            ◄──────────┤           │              │             │             │             │
+    │ Select Template        │           │              │             │             │             │
+    ├───────────►│           │           │              │             │             │             │
+    │            │ Navigate to Generation Form           │             │             │             │
+    │            ├─────────────────────►│              │             │             │             │
+    │            │           │ Load Form with Template  │             │             │             │
+    │            │           ◄─────────┤              │             │             │             │
+    │            │           │           │              │             │             │             │
+    │ Upload Job Image       │           │              │             │             │             │
+    ├─────────────────────────────────►│              │             │             │             │
+    │            │           │ Validate & Assess Quality│             │             │             │
+    │            │           ├─────────►│              │             │             │             │
+    │            │           │ Quality Indicator (Good/Fair/Poor)    │             │             │
+    │            │           ◄─────────┤              │             │             │             │
+    │ Show Quality Status    │           │              │             │             │             │
+    ◄─────────────────────────────────┤              │             │             │             │
+    │            │           │           │              │             │             │             │
+    │ Upload CV File         │           │              │             │             │             │
+    ├─────────────────────────────────►│              │             │             │             │
+    │            │           │ Validate & Assess CV Quality         │             │             │
+    │            │           ├─────────►│              │             │             │             │
+    │            │           │ CV Quality Indicator    │             │             │             │
+    │            │           ◄─────────┤              │             │             │             │
+    │ Show CV Quality Status │           │              │             │             │             │
+    ◄─────────────────────────────────┤              │             │             │             │
+    │            │           │           │              │             │             │             │
+    │ Click Generate Cover Letter       │              │             │             │             │
+    ├─────────────────────────────────►│              │             │             │             │
+    │            │           │ POST /api/generate (with template ID) │             │             │
+    │            │           ├─────────────────────────►│             │             │             │
+    │            │           │           │ Extract Image Text        │             │             │
+    │            │           │           │              ├────────────►│             │             │
+    │            │           │           │              │ OCR Results │             │             │
+    │            │           │           │              ◄────────────┤             │             │
+    │            │           │           │ Extract CV Text           │             │             │
+    │            │           │           │              ├─────────────────────────►│             │
+    │            │           │           │              │ CV Content  │             │             │
+    │            │           │           │              ◄─────────────────────────┤             │
+    │            │           │           │ Generate with Template Context          │             │
+    │            │           │           │              ├────────────►│             │             │
+    │            │           │ Stream Cover Letter Content (Template-aware)       │             │
+    │            │           ◄┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─┤             │             │             │
+    │ Display Streaming Text with Template Style        │             │             │             │
+    ◄┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐ │             │             │             │
+    │            │           │           │              │             │             │             │
+    │ Generation Complete    │           │              │             │             │             │
+    ◄─────────────────────────────────┤              │             │             │             │
+    │            │           │           │              │             │             │             │
 ```
 
 ### 2. Template Switching with Content Preservation
 
 ```
-Job Seeker    Result Page     Template Switcher    Template Engine    Router
-    │             │              │                    │               │
-    │ View Result  │              │                    │               │
-    ├─────────────►│              │                    │               │
-    │             │ Show Cover Letter with Template   │               │
-    │             ├─────────────►│                    │               │
-    │             │ Current Template Display          │               │
-    │             ◄─────────────┤                    │               │
-    │ Click Switch Template      │                    │               │
-    ├─────────────►│              │                    │               │
-    │             │ Open Template Dialog              │               │
-    │             ├─────────────►│                    │               │
-    │             │ Available Templates               │               │
-    │             ◄─────────────┤                    │               │
-    │ Select New Template        │                    │               │
-    ├─────────────►│              │                    │               │
+Job Seeker    Result Page    Template        Template       Content         Router
+                            Switcher        Engine         State
+    │             │            │               │             │               │
+    │ View Generated Result    │               │             │               │
+    ├────────────►│            │               │             │               │
+    │             │ Display Cover Letter      │             │               │
+    │             ├───────────►│               │             │               │
+    │             │ Show Template Style       │             │               │
+    │             ◄───────────┤               │             │               │
+    │ Click Switch Template    │               │             │               │
+    ├────────────►│            │               │             │               │
+    │             │ Open Template Switcher Dialog          │               │
+    │             ├───────────►│               │             │               │
+    │             │ Show Available Templates  │             │               │
+    │             ◄───────────┤               │             │               │
+    │ Select New Template      │               │             │               │
+    ├────────────►│            │               │             │               │
+    │             │ Preserve Current Content  │             │               │
+    │             ├───────────────────────────►│             │               │
+    │             │ Content Stored            │             │               │
+    │             ◄───────────────────────────┤             │               │
+    │             │ Apply New Template        │             │               │
+    │             ├─────────────────────────►│             │               │
+    │             │ Template Formatting Applied            │               │
+    │             ◄─────────────────────────┤             │               │
+    │             │ Update URL with New Template ID        │               │
+    │             ├─────────────────────────────────────────►│
+    │             │ URL Updated               │             │               │
+    │             ◄─────────────────────────────────────────┤
+    │ Show Updated Cover Letter│               │             │               │
+    ◄────────────┤            │               │             │               │
+    │             │            │               │             │               │
+```
+
+### 3. Real-time Input Quality Assessment
+
+```
+Job Seeker    Form           Quality         Document        Link
+              Component      Indicator       Analyzer        Validator
+    │             │            │               │               │
+    │ Upload Image File        │               │               │
+    ├────────────►│            │               │               │
+    │             │ Validate File Format      │               │
+    │             ├───────────────────────────►│               │
+    │             │ File Valid                │               │
+    │             ◄───────────────────────────┤               │
+    │             │ Assess Image Quality      │               │
+    │             ├───────────►│               │               │
+    │             │ Quality Score (Good/Fair/Poor)           │
+    │             ◄───────────┤               │               │
+    │ Show Quality Indicator   │               │               │
+    ◄────────────┤            │               │               │
+    │             │            │               │               │
+    │ Enter Job URL            │               │               │
+    ├────────────►│            │               │               │
+    │             │ Validate URL Format       │               │
+    │             ├─────────────────────────────────────────►│
+    │             │ URL Format Valid          │               │
+    │             ◄─────────────────────────────────────────┤
+    │             │ Detect Job Source         │               │
+    │             ├─────────────────────────────────────────►│
+    │             │ Source Detected (LinkedIn/Indeed/etc.)   │
+    │             ◄─────────────────────────────────────────┤
+    │ Show URL Status          │               │               │
+    ◄────────────┤            │               │               │
+    │             │            │               │               │
+```
+
+### 4. Document Download with Template Formatting
+
+```
+Job Seeker    Result Page    Download        Document        File
+                            Component       Generator       System
+    │             │            │               │               │
+    │ Click Download Button    │               │               │
+    ├────────────►│            │               │               │
+    │             │ Show Format Options       │               │
+    │             ├───────────►│               │               │
+    │             │ Format Selection Dialog   │               │
+    │             ◄───────────┤               │               │
+    │ Select PDF Format        │               │               │
+    ├────────────►│            │               │               │
+    │             │ Generate PDF with Template Formatting     │
+    │             ├─────────────────────────►│               │
+    │             │ Apply Template Styles    │               │
+    │             │ (fonts, colors, layout)  │               │
+    │             │              │           │               │
+    │             │ Generate Smart Filename  │               │
+    │             │ (based on job/company)   │               │
+    │             │              │           │               │
+    │             │ PDF Generated            │               │
+    │             ◄─────────────────────────┤               │
+    │             │ Initiate Download        │               │
+    │             ├─────────────────────────────────────────►│
+    │             │ File Downloaded          │               │
+    │             ◄─────────────────────────────────────────┤
+    │ File Saved to Device     │               │               │
+    ◄────────────┤            │               │               │
+    │             │            │               │               │
+```
+
+### 5. Error Handling and Recovery Flow
+
+```
+Job Seeker    Form           API            Error          Recovery
+              Component      Route          Handler        System
+    │             │            │               │               │
+    │ Submit Generation Request │               │               │
+    ├────────────►│            │               │               │
+    │             │ POST /api/generate         │               │
+    │             ├───────────►│               │               │
+    │             │            │ Processing Error              │
+    │             │            ├──────────────►│               │
+    │             │            │ Error Classification         │
+    │             │            │ (Network/API/Validation)     │
+    │             │            │               │               │
+    │             │            │ Determine Recovery Strategy  │
+    │             │            │               ├──────────────►│
+    │             │            │               │ Auto-retry    │
+    │             │            │               │ Strategy      │
+    │             │            │               ◄──────────────┤
+    │             │ Error Response with Recovery Options      │
+    │             ◄───────────┤               │               │
+    │ Show Error Message       │               │               │
+    ◄────────────┤            │               │               │
+    │ User-friendly Error + Retry Button       │               │
+    │             │            │               │               │
+    │ Click Retry              │               │               │
+    ├────────────►│            │               │               │
+    │             │ Retry Request with Same Data             │
+    │             ├───────────►│               │               │
+    │             │ Success Response          │               │
+    │             ◄───────────┤               │               │
+    │ Show Success Result      │               │               │
+    ◄────────────┤            │               │               │
+    │             │            │               │               │
+```
+
     │             │ Confirm Switch│                    │               │
     │             ├─────────────►│                    │               │
     │             │              │ Preserve Content   │               │
@@ -119,118 +249,124 @@ Job Seeker    Result Page     Template Switcher    Template Engine    Router
     │ Show Success Notification  │                    │               │
     ◄─────────────┤              │                    │               │
     │             │              │                    │               │
+
 ```
 
 ### 3. Real-time Quality Assessment Process
 
 ```
-Job Seeker    Upload Component    Quality Assessor    Indicator    Banner
-    │             │                  │                 │             │
-    │ Select File  │                  │                 │             │
-    ├─────────────►│                  │                 │             │
-    │             │ File Selected    │                 │             │
-    │             ├─────────────────►│                 │             │
-    │             │                  │ Analyze Quality │             │
-    │             │                  ├────────────────►│             │
-    │             │                  │ Quality Score   │             │
-    │             │                  ◄────────────────┤             │
-    │             │ Show Indicator   │                 │             │
-    │             ├─────────────────────────────────────────────────►│
-    │             │                  │                 │ Color Set   │
-    │             │                  │                 │ (Green/     │
-    │             │                  │                 │ Yellow/Red) │
-    │             │                  │                 ◄─────────────┤
-    │ Quality Indicator Visible      │                 │             │
-    ◄─────────────┤                  │                 │             │
-    │             │                  │ Generate Tips   │             │
-    │             │                  ├─────────────────────────────────────────►│
-    │             │                  │                 │ Adaptive Tips│
-    │             │                  │                 │ Generated    │
-    │             │                  │                 ◄─────────────┤
-    │             │ Show Tips Banner │                 │             │
-    │             ├─────────────────────────────────────────────────►│
-    │             │                  │                 │ Tips Display│
-    │             │                  │                 ◄─────────────┤
-    │ View Quality Tips              │                 │             │
-    ◄─────────────┤                  │                 │             │
-    │             │                  │                 │             │
+
+Job Seeker Upload Component Quality Assessor Indicator Banner
+│ │ │ │ │
+│ Select File │ │ │ │
+├─────────────►│ │ │ │
+│ │ File Selected │ │ │
+│ ├─────────────────►│ │ │
+│ │ │ Analyze Quality │ │
+│ │ ├────────────────►│ │
+│ │ │ Quality Score │ │
+│ │ ◄────────────────┤ │
+│ │ Show Indicator │ │ │
+│ ├─────────────────────────────────────────────────►│
+│ │ │ │ Color Set │
+│ │ │ │ (Green/ │
+│ │ │ │ Yellow/Red) │
+│ │ │ ◄─────────────┤
+│ Quality Indicator Visible │ │ │
+◄─────────────┤ │ │ │
+│ │ │ Generate Tips │ │
+│ │ ├─────────────────────────────────────────►│
+│ │ │ │ Adaptive Tips│
+│ │ │ │ Generated │
+│ │ │ ◄─────────────┤
+│ │ Show Tips Banner │ │ │
+│ ├─────────────────────────────────────────────────►│
+│ │ │ │ Tips Display│
+│ │ │ ◄─────────────┤
+│ View Quality Tips │ │ │
+◄─────────────┤ │ │ │
+│ │ │ │ │
+
 ```
 
 ### 4. Template-Aware File Download Process
 
 ```
-Job Seeker    UI Component    API Route      Template Engine    Document Utils    File System
-    │             │              │               │                 │               │
-    │ Click Download              │               │                 │               │
-    ├─────────────►│              │               │                 │               │
-    │             │ Select Format │               │                 │               │
-    │             ├──────────────►│               │                 │               │
-    │             │ Format Selected               │                 │               │
-    │             ◄──────────────┤               │                 │               │
-    │             │              │               │                 │               │
-    │             │ POST /api/download with template              │               │
-    │             ├─────────────►│               │                 │               │
-    │             │              │ Get Template Info               │               │
-    │             │              ├──────────────►│                 │               │
-    │             │              │ Template Config│                 │               │
-    │             │              ◄──────────────┤                 │               │
-    │             │              │ Format with Template            │               │
-    │             │              ├─────────────────────────────────►│               │
-    │             │              │               │ Apply Template  │               │
-    │             │              │               ├────────────────►│               │
-    │             │              │               │ Formatted Doc   │               │
-    │             │              │               ◄────────────────┤               │
-    │             │              │ Template Document Ready         │               │
-    │             │              ◄─────────────────────────────────┤               │
-    │             │              │               │                 │               │
-    │             │ File Stream with Template     │                 │               │
-    │             ◄─────────────┤               │                 │               │
-    │ Download Template File     │               │                 │               │
-    ◄─────────────┤              │               │                 │               │
-    │             │              │               │                 │ Cleanup File  │
-    │             │              │               │                 ├──────────────►│
-    │             │              │               │                 │ File Deleted  │
-    │             │              │               │                 ◄──────────────┤
-    │             │              │               │                 │               │
+
+Job Seeker UI Component API Route Template Engine Document Utils File System
+│ │ │ │ │ │
+│ Click Download │ │ │ │
+├─────────────►│ │ │ │ │
+│ │ Select Format │ │ │ │
+│ ├──────────────►│ │ │ │
+│ │ Format Selected │ │ │
+│ ◄──────────────┤ │ │ │
+│ │ │ │ │ │
+│ │ POST /api/download with template │ │
+│ ├─────────────►│ │ │ │
+│ │ │ Get Template Info │ │
+│ │ ├──────────────►│ │ │
+│ │ │ Template Config│ │ │
+│ │ ◄──────────────┤ │ │
+│ │ │ Format with Template │ │
+│ │ ├─────────────────────────────────►│ │
+│ │ │ │ Apply Template │ │
+│ │ │ ├────────────────►│ │
+│ │ │ │ Formatted Doc │ │
+│ │ │ ◄────────────────┤ │
+│ │ │ Template Document Ready │ │
+│ │ ◄─────────────────────────────────┤ │
+│ │ │ │ │ │
+│ │ File Stream with Template │ │ │
+│ ◄─────────────┤ │ │ │
+│ Download Template File │ │ │ │
+◄─────────────┤ │ │ │ │
+│ │ │ │ │ Cleanup File │
+│ │ │ │ ├──────────────►│
+│ │ │ │ │ File Deleted │
+│ │ │ │ ◄──────────────┤
+│ │ │ │ │ │
+
 ```
 
 ### 5. Enhanced Input Quality Assessment with Visual Feedback
 
 ```
-System        File Processor   Quality Assessor   Visual Indicator   Adaptive Banner   Mode Selector
-    │               │               │                 │                 │               │
-    │ Assess Input Quality          │                 │                 │               │
-    ├──────────────►│               │                 │                 │               │
-    │               │ Analyze Image/URL               │                 │               │
-    │               ├──────────────►│                 │                 │               │
-    │               │               │ Calculate Score │                 │               │
-    │               │               ├────────────────►│                 │               │
-    │               │               │ Green/Yellow/Red│                 │               │
-    │               │               ◄────────────────┤                 │               │
-    │               │ Image Quality │                 │                 │               │
-    │               ◄──────────────┤                 │                 │               │
-    │               │               │                 │                 │               │
-    │               │ Analyze CV    │                 │                 │               │
-    │               ├──────────────►│                 │                 │               │
-    │               │               │ Calculate CV Score                │               │
-    │               │               ├────────────────►│                 │               │
-    │               │               │ CV Quality Color│                 │               │
-    │               │               ◄────────────────┤                 │               │
-    │               │ CV Quality    │                 │                 │               │
-    │               ◄──────────────┤                 │                 │               │
-    │               │               │                 │                 │               │
-    │ Quality Scores│               │                 │                 │               │
-    ◄──────────────┤               │                 │                 │               │
-    │               │               │ Generate Quality Tips             │               │
-    │               │               ├─────────────────────────────────►│               │
-    │               │               │                 │ Show Tips Banner│               │
-    │               │               │                 ◄─────────────────┤               │
-    │               │               │                 │                 │               │
-    │ Determine Generation Mode     │                 │                 │               │
-    ├─────────────────────────────────────────────────────────────────────────────────►│
-    │               │               │                 │                 │ Mode Decision │
-    ◄─────────────────────────────────────────────────────────────────────────────────┤
-    │               │               │                 │                 │               │
+
+System File Processor Quality Assessor Visual Indicator Adaptive Banner Mode Selector
+│ │ │ │ │ │
+│ Assess Input Quality │ │ │ │
+├──────────────►│ │ │ │ │
+│ │ Analyze Image/URL │ │ │
+│ ├──────────────►│ │ │ │
+│ │ │ Calculate Score │ │ │
+│ │ ├────────────────►│ │ │
+│ │ │ Green/Yellow/Red│ │ │
+│ │ ◄────────────────┤ │ │
+│ │ Image Quality │ │ │ │
+│ ◄──────────────┤ │ │ │
+│ │ │ │ │ │
+│ │ Analyze CV │ │ │ │
+│ ├──────────────►│ │ │ │
+│ │ │ Calculate CV Score │ │
+│ │ ├────────────────►│ │ │
+│ │ │ CV Quality Color│ │ │
+│ │ ◄────────────────┤ │ │
+│ │ CV Quality │ │ │ │
+│ ◄──────────────┤ │ │ │
+│ │ │ │ │ │
+│ Quality Scores│ │ │ │ │
+◄──────────────┤ │ │ │ │
+│ │ │ Generate Quality Tips │ │
+│ │ ├─────────────────────────────────►│ │
+│ │ │ │ Show Tips Banner│ │
+│ │ │ ◄─────────────────┤ │
+│ │ │ │ │ │
+│ Determine Generation Mode │ │ │ │
+├─────────────────────────────────────────────────────────────────────────────────►│
+│ │ │ │ │ Mode Decision │
+◄─────────────────────────────────────────────────────────────────────────────────┤
+│ │ │ │ │ │
 
     Quality Indicators:
     - Green: High quality input (>80% score)
@@ -242,208 +378,210 @@ System        File Processor   Quality Assessor   Visual Indicator   Adaptive Ba
     - Job-Focused Mode: Green job, yellow/red CV
     - CV-Focused Mode: Yellow/red job, green CV
     - Generic Mode: Both inputs yellow/red
+
 ```
 
 ### 5. Error Handling Sequence
 
 ```
-Job Seeker    UI Component    API Route      Error Handler     Notification
-    │             │              │               │               │
-    │ Submit Request              │               │               │
-    ├─────────────►│              │               │               │
-    │             │ Process Request               │               │
-    │             ├─────────────►│               │               │
-    │             │              │ [Error Occurs]│               │
-    │             │              ├──────────────►│               │
-    │             │              │               │ Log Error     │
-    │             │              │               ├──────────────►│
-    │             │              │               │ Error Logged  │
-    │             │              │               ◄──────────────┤
-    │             │              │ Error Details │               │
-    │             │              ◄──────────────┤               │
-    │             │ Error Response│               │               │
-    │             ◄─────────────┤               │               │
-    │ Show Error  │              │               │               │
-    ◄─────────────┤              │               │               │
-    │             │              │               │               │
-    │ Retry Action│              │               │               │
-    ├─────────────►│              │               │               │
-    │             │ Retry Request │               │               │
-    │             ├─────────────►│               │               │
-    │             │              │               │               │
 
-    Error Types:
-    - File Upload Errors
-    - Network Timeouts
-    - API Rate Limits
-    - Processing Failures
-    - Validation Errors
-```
-
-### 6. Real-time Content Streaming
+Job Seeker UI Component API Route Error Handler Notification
+│ │ │ │ │
+│ Submit Request │ │ │
+├─────────────►│ │ │ │
+│ │ Process Request │ │
+│ ├─────────────►│ │ │
+│ │ │ [Error Occurs]│ │
+│ │ ├──────────────►│ │
+│ │ │ │ Log Error │
+│ │ │ ├──────────────►│
+│ │ │ │ Error Logged │
+│ │ │ ◄──────────────┤
+│ │ │ Error Details │ │
+│ │ ◄──────────────┤ │
+│ │ Error Response│ │ │
+│ ◄─────────────┤ │ │
+│ Show Error │ │ │ │
+◄─────────────┤ │ │ │
 
 ```
-Job Seeker    UI Component    API Route      OpenAI API      Stream Handler
-    │             │              │               │               │
-    │ Request Generation          │               │               │
-    ├─────────────►│              │               │               │
-    │             │ Start Generation              │               │
-    │             ├─────────────►│               │               │
-    │             │              │ Create Stream │               │
-    │             │              ├──────────────►│               │
-    │             │              │               │ Initialize    │
-    │             │              │               ├──────────────►│
-    │             │              │               │ Stream Ready  │
-    │             │              │               ◄──────────────┤
-    │             │              │ Stream Token 1│               │
-    │             │              ◄┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐┤               │
-    │             │ Token 1      │               │               │
-    │             ◄┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐┤               │               │
-    │ Display Token 1            │               │               │
-    ◄┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐│              │               │               │
-    │             │              │ Stream Token 2│               │
-    │             │              ◄┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐┤               │
-    │             │ Token 2      │               │               │
-    │             ◄┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐┤               │               │
-    │ Display Token 2            │               │               │
-    ◄┐ ┐ ┐ ┐ ┐ ┐ ┐ ┐│              │               │               │
-    │             │              │ [Continue streaming...]       │
-    │             │              │               │               │
-    │             │              │ Stream Complete               │
-    │             │              ◄──────────────┤               │
-    │             │ Generation Complete          │               │
-    │             ◄─────────────┤               │               │
-    │ Show Complete Result       │               │               │
-    ◄─────────────┤              │               │               │
-    │             │              │               │               │
-```
 
-## Supporting Sequence Diagrams
-
-### 7. Authentication & Rate Limiting
+### 6. URL Job Link Processing Flow
 
 ```
-Job Seeker    Rate Limiter    API Route      OpenAI API
-    │             │              │               │
-    │ API Request │              │               │
-    ├─────────────►│              │               │
-    │             │ Check Rate Limit              │
-    │             ├─────────────►│               │
-    │             │ Within Limit │               │
-    │             ◄─────────────┤               │
-    │ Request Allowed            │               │
-    ◄─────────────┤              │               │
-    │             │              │ Forward Request
-    │             │              ├──────────────►│
-    │             │              │ API Response  │
-    │             │              ◄──────────────┤
-    │             │ Response     │               │
-    │             ◄─────────────┤               │
-    │ Final Response             │               │
-    ◄─────────────┤              │               │
-    │             │              │               │
 
-    Alternative Flow - Rate Limit Exceeded:
-    │ API Request │              │               │
-    ├─────────────►│              │               │
-    │             │ Check Rate Limit              │
-    │             ├─────────────►│               │
-    │             │ Limit Exceeded               │
-    │             ◄─────────────┤               │
-    │ Rate Limit Error           │               │
-    ◄─────────────┤              │               │
-```
-
-### 8. File Validation Process
+Job Seeker Form Link OpenAI Content
+Component Validator Web Search Processor
+│ │ │ │ │
+│ Enter Job URL │ │ │
+├────────────►│ │ │ │
+│ │ Real-time URL Validation │ │
+│ ├───────────►│ │ │
+│ │ Validation Status │ │
+│ ◄───────────┤ │ │
+│ │ Detect Job Source │ │
+│ ├───────────►│ │ │
+│ │ Source Info (LinkedIn/Indeed/etc.) │
+│ ◄───────────┤ │ │
+│ Show URL Status │ │ │
+◄────────────┤ │ │ │
+│ │ │ │ │
+│ Submit for Processing │ │ │
+├────────────►│ │ │ │
+│ │ Extract Job Info from URL │ │
+│ ├─────────────────────────►│ │
+│ │ Job Content Extracted │ │
+│ ◄─────────────────────────┤ │
+│ │ Process & Structure Content │
+│ ├─────────────────────────────────────────►│
+│ │ Structured Job Information │
+│ ◄─────────────────────────────────────────┤
+│ Return Processed Content │ │ │
+◄────────────┤ │ │ │
+│ │ │ │ │
 
 ```
-User          UI Component    Validator      File Processor
-    │             │              │               │
-    │ Select File │              │               │
-    ├─────────────►│              │               │
-    │             │ Pre-validate │               │
-    │             ├─────────────►│               │
-    │             │              │ Check Size    │
-    │             │              ├──────────────►│
-    │             │              │ Size OK       │
-    │             │              ◄──────────────┤
-    │             │              │ Check Type    │
-    │             │              ├──────────────►│
-    │             │              │ Type Valid    │
-    │             │              ◄──────────────┤
-    │             │ Validation OK│               │
-    │             ◄─────────────┤               │
-    │ File Accepted              │               │
-    ◄─────────────┤              │               │
-    │             │              │               │
 
-    Alternative Flow - Validation Failure:
-    │             │              │ Check Failed  │
-    │             │              ◄──────────────┤
-    │             │ Validation Error              │
-    │             ◄─────────────┤               │
-    │ Show Error  │              │               │
-    ◄─────────────┤              │               │
+## Secondary Sequence Diagrams
+
+### 7. Template Preview Modal Flow
+
 ```
 
-## Interaction Patterns
+Job Seeker Template Preview Template
+Selection Modal Engine
+│ │ │ │
+│ Click Template Preview │ │
+├────────────►│ │ │
+│ │ Open Preview Modal │
+│ ├───────────►│ │
+│ │ Get Template Sample │
+│ ├─────────────────────────►│
+│ │ Template Preview Content │
+│ ◄─────────────────────────┤
+│ │ Display Formatted Sample │
+│ ◄───────────┤ │
+│ Review Template Style │ │
+◄────────────┤ │ │
+│ │ │ │
+│ Close Preview or Select │ │
+├────────────►│ │ │
+│ │ Close Modal/Update Selection │
+│ ├───────────►│ │
+│ │ Modal Closed │
+│ ◄───────────┤ │
+│ Continue with Selection │ │
+◄────────────┤ │ │
+│ │ │ │
 
-### Synchronous Interactions
+```
 
-- File uploads and validation
-- API route processing
-- Document generation
-- Error handling
+### 8. Streaming Text Display Flow
 
-### Asynchronous Interactions
+```
 
-- Real-time content streaming
-- Background file processing
-- Progressive quality assessment
-- Non-blocking UI updates
+Job Seeker Result Page Streaming API OpenAI
+Component Route API
+│ │ │ │ │
+│ Generation Started │ │ │
+├────────────►│ │ │ │
+│ │ Initialize Streaming Display │
+│ ├───────────►│ │ │
+│ │ Start Stream Connection │ │
+│ ├─────────────────────────►│ │
+│ │ │ Stream Request to OpenAI │
+│ │ │ ├──────────────►│
+│ │ │ │ Chunk 1 │
+│ │ │ ◄──────────────┤
+│ │ Stream Chunk 1 │ │
+│ ◄─────────────────────────┤ │
+│ │ Display Partial Text │ │
+│ ◄───────────┤ │ │
+│ See Real-time Text │ │ │
+◄────────────┤ │ │ │
+│ │ │ │ Chunk 2 │
+│ │ │ ◄──────────────┤
+│ │ Stream Chunk 2 │ │
+│ ◄─────────────────────────┤ │
+│ │ Append to Display │ │
+│ ◄───────────┤ │ │
+│ See Updated Text │ │ │
+◄────────────┤ │ │ │
+│ │ │ │ Final Chunk │
+│ │ │ ◄──────────────┤
+│ │ Complete Text │ │
+│ ◄─────────────────────────┤ │
+│ │ Finalize Display │ │
+│ ◄───────────┤ │ │
+│ See Complete Cover Letter│ │ │
+◄────────────┤ │ │ │
+│ │ │ │ │
 
-### Error Propagation
+```
 
-- Client-side validation errors
-- Server-side processing errors
-- External API failures
-- Network connectivity issues
+## System Integration Sequence
 
-## Timing Considerations
+### 9. Complete End-to-End Flow
 
-| Interaction Type           | Expected Duration | Timeout Limit |
-| -------------------------- | ----------------- | ------------- |
-| Template Selection         | 0.5-1 seconds     | 5 seconds     |
-| Template Preview           | 1-2 seconds       | 10 seconds    |
-| Template Switching         | 1-3 seconds       | 15 seconds    |
-| File Upload                | 1-3 seconds       | 30 seconds    |
-| Real-time Quality Check    | 0.5-2 seconds     | 8 seconds     |
-| Text Extraction            | 3-10 seconds      | 45 seconds    |
-| Template-Aware Generation  | 5-15 seconds      | 60 seconds    |
-| Template Document Creation | 2-5 seconds       | 20 seconds    |
-| Stream Response            | Real-time         | 90 seconds    |
+```
 
-## Template System Interactions
+Job Seeker Frontend Backend OpenAI File System Browser
+│ │ │ │ │ │
+│ Start Application │ │ │ │
+├────────────►│ │ │ │ │
+│ │ Load Templates & Initialize │ │
+│ ├───────────►│ │ │ │
+│ │ Template Data│ │ │ │
+│ ◄───────────┤ │ │ │
+│ Template Selection & Preview │ │ │
+├────────────►│ │ │ │ │
+│ │ Navigation to Generation Form │ │
+│ ├───────────►│ │ │ │
+│ File Uploads & Quality Assessment │ │ │
+├────────────►│ │ │ │ │
+│ │ Process Files & Validate │ │ │
+│ ├───────────►│ │ │ │
+│ Submit Generation Request│ │ │ │
+├────────────►│ │ │ │ │
+│ │ Extract Content from Sources │ │
+│ ├─────────────────────────►│ │ │
+│ │ AI Processing & Generation │ │
+│ ├─────────────────────────►│ │ │
+│ │ Stream Generated Content │ │ │
+│ ◄┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─┤ │ │
+│ Real-time Content Display │ │ │
+◄┌ ─ ─ ─ ─ ─ ─│ │ │ │ │
+│ Template Operations (Switch/Download) │ │ │
+├────────────►│ │ │ │ │
+│ │ Generate Documents │ │ │
+│ ├───────────►│ │ ├──────────────►│
+│ │ │ │ │ File Download │
+│ │ │ │ ◄──────────────┤
+│ Completed Process │ │ │ │
+◄────────────┤ │ │ │ │
+│ │ │ │ │ │
 
-### Template Selection Flow
+```
 
-- User browses templates → Preview selection → Confirm choice
-- Immediate visual feedback for selections
-- Template context passed to generation process
+## Key Interaction Patterns
 
-### Template Switching Flow
+### Asynchronous Operations
+- **Streaming Generation**: Real-time text display during AI processing
+- **File Processing**: Background quality assessment and content extraction
+- **Template Switching**: Non-blocking template changes with content preservation
 
-- Content preservation during template changes
-- URL parameter updates for state management
-- No re-generation required, only re-styling
+### Error Handling Patterns
+- **Graceful Degradation**: Continue with reduced functionality during service failures
+- **Retry Mechanisms**: Automatic retry for transient failures
+- **User Feedback**: Clear error messages with actionable recovery steps
 
-### Quality Assessment Flow
-
-- Real-time visual indicators during file upload
-- Color-coded feedback (green/yellow/red)
-- Adaptive content banners with improvement suggestions
+### Performance Optimizations
+- **Progressive Loading**: Template previews and content loaded on-demand
+- **Client-side Validation**: Immediate feedback without server round-trips
+- **Streaming Responses**: Immediate user feedback during long operations
 
 ---
 
-_Document prepared for thesis project using RUP (Rational Unified Process) methodology_  
-_Updated: June 23, 2025 - Reflects current implementation with visual template system, real-time quality indicators, content-preserving template switching, and enhanced user interaction patterns_
+_Document prepared for thesis project using RUP (Rational Unified Process) methodology_
+_Last Updated: July 15, 2025 - Reflects current implementation with complete template system, streaming generation, and quality assessment features_
+```
