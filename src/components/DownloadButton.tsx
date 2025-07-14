@@ -625,7 +625,7 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <div className="px-2 py-1.5 text-sm text-gray-600">
+        {/* <div className="px-2 py-1.5 text-sm text-gray-600">
           <div className="flex items-center space-x-2">
             <templateInfo.icon className={`h-4 w-4 ${templateInfo.color}`} />
             <div>
@@ -635,8 +635,8 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({
               </div>
             </div>
           </div>
-        </div>
-        <div className="my-1 h-px bg-gray-200"></div>
+        </div> */}
+        {/* <div className="my-1 h-px bg-gray-200"></div> */}
         <DropdownMenuItem
           onClick={downloadAsPDF}
           className="flex items-center space-x-2"

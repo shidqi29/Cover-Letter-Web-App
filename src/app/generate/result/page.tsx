@@ -9,17 +9,16 @@ import {
   Copy,
   Download,
   FileText,
-  Share2,
   Zap,
   Palette,
   Shield,
 } from "lucide-react";
 import StreamingText from "@/components/StreamingText";
 import DownloadButton from "@/components/DownloadButton";
-import TemplateComparison from "@/components/TemplateComparison";
-import TemplateSwitcher from "@/components/TemplateSwitcher";
+
 import { toast } from "sonner";
 import { COVER_LETTER_TEMPLATES } from "@/types/templates";
+import Image from "next/image";
 
 export default function ResultPage() {
   const searchParams = useSearchParams();
@@ -50,26 +49,12 @@ export default function ResultPage() {
       router.push("/");
     }
   }, [searchParams, router]);
-
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(coverLetter);
     toast.success("Copied to clipboard!", {
       description: "Cover letter content has been copied to your clipboard.",
       duration: 2000,
     });
-  };
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "My Cover Letter",
-          text: coverLetter,
-        })
-        .catch(console.error);
-    } else {
-      handleCopyToClipboard();
-    }
   };
   const handleBackToHome = () => {
     router.push("/");
@@ -102,16 +87,24 @@ export default function ResultPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="container mx-auto max-w-4xl">
+        <div className="mb-8 flex items-center justify-center">
+          <Image
+            src={"/cdc-logo.jpg"}
+            alt="CDC Logo"
+            width={100}
+            height={100}
+          />
+        </div>
         {/* Header */}{" "}
         <div className="mb-6">
-          <Button
+          {/* <Button
             variant="ghost"
             onClick={handleBackToForm}
             className="mb-4 text-gray-600 hover:text-gray-800"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Form
-          </Button>
+          </Button> */}
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -127,19 +120,6 @@ export default function ResultPage() {
             </div>
 
             <div className="mt-4 flex items-center space-x-2 sm:mt-0">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleShare}
-                className="flex items-center space-x-1"
-              >
-                <Share2 className="h-4 w-4" />
-                <span>Share</span>
-              </Button>{" "}
-              <TemplateComparison
-                content={coverLetter}
-                currentTemplate={searchParams.get("template") || "professional"}
-              />
               <DownloadButton
                 content={coverLetter}
                 template={searchParams.get("template") || "professional"}
@@ -148,7 +128,7 @@ export default function ResultPage() {
           </div>
         </div>
         {/* Template Info Banner */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <Card className="border-l-4 border-l-blue-500">
             <CardContent>
               <div className="p-4">
@@ -194,22 +174,14 @@ export default function ResultPage() {
                       </div>
                     )}{" "}
                   </div>{" "}
-                  <div className="flex items-center space-x-3">
-                    <TemplateSwitcher
-                      currentTemplate={
-                        searchParams.get("template") || "professional"
-                      }
-                      coverLetterContent={coverLetter}
-                    />
-                    <div className="text-sm text-gray-500">
-                      Download formats: PDF & DOCX
-                    </div>
+                  <div className="text-sm text-gray-500">
+                    Download formats: PDF & DOCX
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
         {/* Cover Letter Content */}
         <Card className="mb-6">
           {" "}
