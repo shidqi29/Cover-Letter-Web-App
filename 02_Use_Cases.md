@@ -396,6 +396,80 @@ This document contains detailed use case specifications for the Cover Letter Web
 - UC9 supports UC4 (Link validation improves generation quality)
 - UC10 supports UC3 and UC4 (Quality assessment optimizes generation)
 
+## Use Case Relationships Diagram
+
+```
+                    ┌─────────────────────────┐
+                    │    UC1: Select Cover    │
+                    │    Letter Template      │
+                    └─────────────────────────┘
+                                │
+                                │ «include»
+                                ▼
+                    ┌─────────────────────────┐
+                    │   UC2: Preview          │
+                    │   Template Styles       │
+                    └─────────────────────────┘
+                                │
+                                │ «extend»
+                                ▼
+            ┌─────────────────────────────────────────────────┐
+            │                                                 │
+            ▼                                                 ▼
+┌─────────────────────────┐                   ┌─────────────────────────┐
+│  UC3: Generate Cover    │                   │  UC4: Generate Cover    │
+│  Letter from Job        │                   │  Letter from Job URL    │
+│  Poster Image           │                   │                         │
+└─────────────────────────┘                   └─────────────────────────┘
+            │                                                 │
+            │ «include»                                       │ «include»
+            ▼                                                 ▼
+┌─────────────────────────┐                   ┌─────────────────────────┐
+│  UC6: Assess Input      │◄──────────────────┤  UC7: Validate Job Link │
+│  Quality                │     «extend»      │                         │
+└─────────────────────────┘                   └─────────────────────────┘
+            │
+            │ «include»
+            ▼
+┌─────────────────────────┐
+│  UC8: Stream            │
+│  Generation Progress    │
+└─────────────────────────┘
+            │
+            │ «extend»
+            ▼
+┌─────────────────────────┐
+│  UC9: Handle            │
+│  Generation Errors      │
+└─────────────────────────┘
+            │
+            │ flows to
+            ▼
+┌─────────────────────────┐
+│  UC5: Download          │
+│  Generated Cover Letter │
+└─────────────────────────┘
+```
+
+### Relationship Descriptions
+
+**Include Relationships («include»):**
+
+- UC1 → UC2: Template selection always includes the ability to preview templates
+- UC3 → UC6: Image-based generation always includes input quality assessment
+- UC4 → UC7: URL-based generation always includes job link validation
+- UC6 → UC8: Quality assessment always includes streaming progress during generation
+
+**Extend Relationships («extend»):**
+
+- UC2 → UC3/UC4: Template preview can extend to either generation method
+- UC7 → UC6: Link validation can extend to general quality assessment
+- UC8 → UC9: Streaming progress can extend to error handling when issues occur
+
+**Flow Relationships:**
+
+- UC8 → UC5: Successful generation flows to download functionality
+
 ---
 
 ## Use Case Relationships

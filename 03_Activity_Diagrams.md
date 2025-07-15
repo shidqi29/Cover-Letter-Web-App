@@ -22,7 +22,9 @@ This document contains activity diagrams for the Cover Letter Web Application, f
 └─ ─ ─ ─ ─┘
 
 →              Control Flow
-[condition]    Guard Condition
+[condition]    Gu7. **Template-aware Generation**: AI creates personalized cover letter content with template context
+8. **Streaming with Formatting**: Real-time display of generated content with template styling
+9. **Enhanced Output Actions**: User can copy, download with template formatting, or share generated documentCondition
 ```
 
 ## Primary Activity Diagram: Complete Cover Letter Generation Process
@@ -281,25 +283,38 @@ This document contains activity diagrams for the Cover Letter Web Application, f
                     │  with Template  │
                     └────────┬────────┘
                              │
+                    ┌────────▼────────┐
+                    │  Choose Action  │
+                    │  (Copy/Download │
+                    │  /Share)        │
+                    └────────┬────────┘
+                             │
                           ◇──┴──◇
                          /      \
-               [More Actions]  [Template Switch]
-                       /             \
-              ┌────────▼────────┐  ┌────────▼────────┐
-              │  Choose Action  │  │  Open Template  │
-              │  (Copy/Download │  │  Switch Dialog  │
-              │  /Preview)      │  └────────┬────────┘
-              └────────┬────────┘           │
-                       │           ┌────────▼────────┐
-                    ◇──┴──◇        │  Select New     │
-                   /      \        │  Template       │
-             [Copy]    [Download]   └────────┬────────┘
-                /         \                 │
-       ┌────────▼────────┐ ┌────────▼────────┐
-       │  Copy to        │ │  Select Format  │
-       │  Clipboard      │ │  (PDF/DOCX)     │
-       └────────┬────────┘ └────────┬────────┘
-                │                   │
+                    [Copy]    [Download]
+                       /         \
+              ┌────────▼────────┐ ┌────────▼────────┐
+              │  Copy to        │ │  Select Format  │
+              │  Clipboard      │ │  (PDF/DOCX)     │
+              └────────┬────────┘ └────────┬────────┘
+                       │                   │
+                       │          ┌─ ─ ─ ─▼─ ─ ─ ─┐
+                       │          │ Generate       │
+                       │          │ Document with  │
+                       │          │ Template-      │
+                       │          │ specific       │
+                       │          │ Formatting     │
+                       │          └─ ─ ─ ─┬─ ─ ─ ─┘
+                       │                   │
+                       │          ┌────────▼────────┐
+                       │          │  Download File  │
+                       │          │  to Device      │
+                       │          └────────┬────────┘
+                       │                   │
+                       └───────────────────┘
+                                           │
+                                           ▼
+                                           ◐
                 │          ┌─ ─ ─ ─▼─ ─ ─ ─┐
                 │          │ Generate File  │
                 │          │ with Template  │
@@ -389,81 +404,6 @@ This document contains activity diagrams for the Cover Letter Web Application, f
                └────────┬────────┘
                         │
                        ◐
-
-```
-
-## Activity Diagram: Template Switching Process
-
-```
-
-                             ●
-                             │
-                    ┌────────▼────────┐
-                    │  User on        │
-                    │  Result Page    │
-                    │  with Generated │
-                    │  Content        │
-                    └────────┬────────┘
-                             │
-                    ┌────────▼────────┐
-                    │  Click Switch   │
-                    │  Template       │
-                    │  Button         │
-                    └────────┬────────┘
-                             │
-                    ┌────────▼────────┐
-                    │  Open Template  │
-                    │  Switch Dialog  │
-                    └────────┬────────┘
-                             │
-                    ┌────────▼────────┐
-                    │  Display        │
-                    │  Available      │
-                    │  Templates      │
-                    │  (excluding     │
-                    │  current)       │
-                    └────────┬────────┘
-                             │
-                          ◇──┴──◇
-                         /      \
-                   [Cancel]    [Select New]
-                       /          \
-              ┌────────▼────────┐  ┌────────▼────────┐
-              │  Close Dialog   │  │  Confirm        │
-              │  No Changes     │  │  Template       │
-              └────────┬────────┘  │  Selection      │
-                       │           └────────┬────────┘
-                       │                    │
-                       │           ┌─ ─ ─ ─▼─ ─ ─ ─┐
-                       │           │ Update URL     │
-                       │           │ Parameters     │
-                       │           └─ ─ ─ ─┬─ ─ ─ ─┘
-                       │                    │
-                       │           ┌─ ─ ─ ─▼─ ─ ─ ─┐
-                       │           │ Preserve       │
-                       │           │ Content        │
-                       │           │ Unchanged      │
-                       │           └─ ─ ─ ─┬─ ─ ─ ─┘
-                       │                    │
-                       │           ┌────────▼────────┐
-                       │           │  Apply New      │
-                       │           │  Template       │
-                       │           │  Styling        │
-                       │           └────────┬────────┘
-                       │                    │
-                       │           ┌────────▼────────┐
-                       │           │  Update         │
-                       │           │  Display        │
-                       │           └────────┬────────┘
-                       │                    │
-                       │           ┌────────▼────────┐
-                       │           │  Show Success   │
-                       │           │  Notification   │
-                       │           └────────┬────────┘
-                       │                    │
-                       └──────┬─────────────┘
-                              │
-                             ◐
 
 ```
 
@@ -705,7 +645,7 @@ This document contains activity diagrams for the Cover Letter Web Application, f
 
 - **Selection Phase**: Choose template → Preview options → Confirm selection
 - **Generation Phase**: Generate content with template context → Apply formatting → Display styled result
-- **Switching Phase**: Select new template → Preserve content → Apply new styling → Update display
+- **Output Phase**: Copy to clipboard or download with template formatting
 
 ### Quality Assessment Flow with Visual Indicators
 
@@ -714,22 +654,15 @@ This document contains activity diagrams for the Cover Letter Web Application, f
 - **Red Indicators**: Low quality inputs - Generic mode with adaptive guidance
 - **Real-time Feedback**: Instant visual feedback as users upload files or enter URLs
 
-### Template Switching Strategy
-
-- **Content Preservation**: Original text content remains completely unchanged
-- **Style Application**: New template formatting applied to existing content
-- **URL Management**: Template parameter updated while preserving content parameter
-- **User Feedback**: Success notifications confirm template changes
-
 ### Error Handling Strategy
 
 - **File Errors**: Invalid format, corrupted files, size limits with quality indicators
 - **Network Errors**: API timeouts, connection issues, service unavailable
 - **Validation Errors**: Missing required fields, invalid URLs with real-time feedback
-- **Template Errors**: Template switching failures, formatting issues
+- **Generation Errors**: AI processing failures, content generation issues
 
 ---
 
 _Document prepared for thesis project using RUP (Rational Unified Process) methodology_
-_Updated: June 23, 2025 - Reflects current implementation with visual template system, real-time quality indicators, content-preserving template switching, and enhanced user experience workflows_
+_Updated: July 15, 2025 - Reflects current implementation with visual template system, real-time quality indicators, and enhanced user experience workflows_
 ```

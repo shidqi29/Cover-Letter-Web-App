@@ -23,41 +23,72 @@ Actor/Object     Message/Call           Return/Response
 ### 1. Complete Cover Letter Generation Flow with Template System
 
 ```
-Job Seeker    Homepage    Template     Generation    Quality        API           OpenAI        Document
-              Component   Selection    Form         Assessment     Route         Service       Generator
-    │            │           │           │              │             │             │             │
-    │ Access App │           │           │              │             │             │             │
-    ├───────────►│           │           │              │             │             │             │
-    │            │ Load Templates        │              │             │             │             │
-    │            ├──────────►│           │              │             │             │             │
-    │            │ Display Template Cards│              │             │             │             │
-    │            ◄──────────┤           │              │             │             │             │
-    │ Preview Template       │           │              │             │             │             │
-    ├───────────►│           │           │              │             │             │             │
-    │            │ Show Preview Modal    │              │             │             │             │
-    │            ├──────────►│           │              │             │             │             │
-    │            │ Template Preview      │              │             │             │             │
-    │            ◄──────────┤           │              │             │             │             │
-    │ Select Template        │           │              │             │             │             │
-    ├───────────►│           │           │              │             │             │             │
-    │            │ Navigate to Generation Form           │             │             │             │
-    │            ├─────────────────────►│              │             │             │             │
-    │            │           │ Load Form with Template  │             │             │             │
-    │            │           ◄─────────┤              │             │             │             │
-    │            │           │           │              │             │             │             │
-    │ Upload Job Image       │           │              │             │             │             │
-    ├─────────────────────────────────►│              │             │             │             │
-    │            │           │ Validate & Assess Quality│             │             │             │
-    │            │           ├─────────►│              │             │             │             │
-    │            │           │ Quality Indicator (Good/Fair/Poor)    │             │             │
-    │            │           ◄─────────┤              │             │             │             │
-    │ Show Quality Status    │           │              │             │             │             │
-    ◄─────────────────────────────────┤              │             │             │             │
-    │            │           │           │              │             │             │             │
-    │ Upload CV File         │           │              │             │             │             │
-    ├─────────────────────────────────►│              │             │             │             │
-    │            │           │ Validate & Assess CV Quality         │             │             │
-    │            │           ├─────────►│              │             │             │             │
+Job Seeker    Homepage      Template      Generation    Quality       API           OpenAI        Document
+              Component     Selection     Form          Assessment    Route         Service       Generator
+    │            │             │             │              │             │             │             │
+    │ Access App │             │             │              │             │             │             │
+    ├───────────►│             │             │              │             │             │             │
+    │            │ Load Templates            │              │             │             │             │
+    │            ├────────────►│             │              │             │             │             │
+    │            │ Display Template Cards    │              │             │             │             │
+    │            ◄────────────┤             │              │             │             │             │
+    │ Preview Template         │             │              │             │             │             │
+    ├───────────►│             │             │              │             │             │             │
+    │            │ Show Preview Modal        │              │             │             │             │
+    │            ├────────────►│             │              │             │             │             │
+    │            │ Template Preview          │              │             │             │             │
+    │            ◄────────────┤             │              │             │             │             │
+    │ Select Template          │             │              │             │             │             │
+    ├───────────►│             │             │              │             │             │             │
+    │            │ Navigate to Generation Form             │             │             │             │
+    │            ├─────────────────────────►│              │             │             │             │
+    │            │             │ Load Form with Template  │             │             │             │
+    │            │             ◄───────────┤              │             │             │             │
+    │            │             │             │              │             │             │             │
+    │ Upload Job Image         │             │              │             │             │             │
+    ├─────────────────────────────────────►│              │             │             │             │
+    │            │             │ Validate & Assess Quality│             │             │             │
+    │            │             ├───────────►│              │             │             │             │
+    │            │             │ Quality Indicator (Good/Fair/Poor)    │             │             │
+    │            │             ◄───────────┤              │             │             │             │
+    │ Show Quality Status      │             │              │             │             │             │
+    ◄─────────────────────────────────────┤              │             │             │             │
+    │            │             │             │              │             │             │             │
+    │ Upload CV File           │             │              │             │             │             │
+    ├─────────────────────────────────────►│              │             │             │             │
+    │            │             │ Validate & Assess CV Quality         │             │             │
+    │            │             ├───────────►│              │             │             │             │
+    │            │             │ CV Quality Indicator      │             │             │             │
+    │            │             ◄───────────┤              │             │             │             │
+    │ Show CV Quality Status   │             │              │             │             │             │
+    ◄─────────────────────────────────────┤              │             │             │             │
+    │            │             │             │              │             │             │             │
+    │ Select Language & Generate            │              │             │             │             │
+    ├─────────────────────────────────────►│              │             │             │             │
+    │            │             │ Submit Generation Request │             │             │             │
+    │            │             ├─────────────────────────►│             │             │             │
+    │            │             │             │ Extract Job Info from Image           │             │
+    │            │             │             ├─────────────────────────────────────►│             │
+    │            │             │             │ Job Information Extracted             │             │
+    │            │             │             ◄─────────────────────────────────────┤             │
+    │            │             │             │ Extract CV Content                    │             │
+    │            │             │             ├─────────────────────────────────────►│             │
+    │            │             │             │ CV Content Extracted                 │             │
+    │            │             │             ◄─────────────────────────────────────┤             │
+    │            │             │             │ Generate Cover Letter with Template  │             │
+    │            │             │             ├─────────────────────────────────────────────────►│
+    │            │             │             │ Stream Generated Content             │             │
+    │            │             │ Stream Content to UI      ◄─────────────────────────────────────┤
+    │            │             ◄┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤             │             │             │
+    │ See Real-time Content    │             │              │             │             │             │
+    ◄┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┤             │              │             │             │             │
+    │            │             │ Complete Cover Letter    │             │             │             │
+    │            │             ◄─────────────────────────┤             │             │             │
+    │ View Final Result        │             │              │             │             │             │
+    ◄─────────────────────────────────────┤              │             │             │             │
+    │            │             │             │              │             │             │             │
+```
+
     │            │           │ CV Quality Indicator    │             │             │             │
     │            │           ◄─────────┤              │             │             │             │
     │ Show CV Quality Status │           │              │             │             │             │
@@ -85,19 +116,44 @@ Job Seeker    Homepage    Template     Generation    Quality        API         
     │ Generation Complete    │           │              │             │             │             │
     ◄─────────────────────────────────┤              │             │             │             │
     │            │           │           │              │             │             │             │
+
 ```
 
 ### 2. Real-time Input Quality Assessment
 
 ```
-Job Seeker    Form           Quality         Document        Link
-              Component      Indicator       Analyzer        Validator
-    │             │            │               │               │
-    │ Upload Image File        │               │               │
-    ├────────────►│            │               │               │
-    │             │ Validate File Format      │               │
-    │             ├───────────────────────────►│               │
-    │             │ File Valid                │               │
+
+Job Seeker Form Quality Document Link
+Component Indicator Analyzer Validator
+│ │ │ │ │
+│ Upload Image File │ │ │
+├────────────►│ │ │ │
+│ │ Validate File Format │ │
+│ ├─────────────────────────►│ │
+│ │ File Valid │ │
+│ ◄─────────────────────────┤ │
+│ │ Analyze Quality │ │
+│ ├───────────►│ │ │
+│ │ Quality Score (Green/Yellow/Red) │
+│ ◄───────────┤ │ │
+│ Show Quality Indicator │ │ │
+◄────────────┤ │ │ │
+│ │ │ │ │
+│ Enter Job URL │ │ │
+├────────────►│ │ │ │
+│ │ Real-time URL Validation │ │
+│ ├─────────────────────────────────────────►│
+│ │ Validation Status │ │
+│ ◄─────────────────────────────────────────┤
+│ │ Detect Job Source │ │
+│ ├─────────────────────────────────────────►│
+│ │ Source Info (LinkedIn/Indeed/etc.) │
+│ ◄─────────────────────────────────────────┤
+│ Show Link Status │ │ │
+◄────────────┤ │ │ │
+│ │ │ │ │
+
+```
     │             ◄───────────────────────────┤               │
     │             │ Assess Image Quality      │               │
     │             ├───────────►│               │               │
@@ -127,6 +183,31 @@ Job Seeker    Form           Quality         Document        Link
 Job Seeker    Result Page    Download        Document        File
                             Component       Generator       System
     │             │            │               │               │
+    │ Click Download           │               │               │
+    ├────────────►│            │               │               │
+    │             │ Show Format Options       │               │
+    │             ├───────────►│               │               │
+    │             │ Format Options            │               │
+    │             ◄───────────┤               │               │
+    │ Select Format (PDF/DOCX) │               │               │
+    ├────────────►│            │               │               │
+    │             │ Generate Document with Template          │
+    │             ├─────────────────────────►│               │
+    │             │ Apply Template Formatting │               │
+    │             │ ├───────────────────────►│               │
+    │             │ │ Formatted Document     │               │
+    │             │ ◄───────────────────────┤               │
+    │             │ Document Ready           │               │
+    │             ◄─────────────────────────┤               │
+    │             │ Initiate Download        │               │
+    │             ├─────────────────────────────────────────►│
+    │             │ File Download Started    │               │
+    │             ◄─────────────────────────────────────────┤
+    │ Download Complete        │               │               │
+    ◄────────────┤            │               │               │
+    │             │            │               │               │
+```
+
     │ Click Download Button    │               │               │
     ├────────────►│            │               │               │
     │             │ Show Format Options       │               │
@@ -152,14 +233,44 @@ Job Seeker    Result Page    Download        Document        File
     │ File Saved to Device     │               │               │
     ◄────────────┤            │               │               │
     │             │            │               │               │
+
 ```
 
 ### 4. Error Handling and Recovery Flow
 
 ```
-Job Seeker    Form           API            Error          Recovery
-              Component      Route          Handler        System
-    │             │            │               │               │
+
+Job Seeker Form API Error Recovery
+Component Route Handler System
+│ │ │ │ │
+│ Submit Invalid Data │ │ │
+├────────────►│ │ │ │
+│ │ Validate Input │ │
+│ ├───────────►│ │ │
+│ │ Validation Error │ │
+│ ◄───────────┤ │ │
+│ Show Validation Error │ │ │
+◄────────────┤ │ │ │
+│ │ │ │ │
+│ Submit Valid Data │ │ │
+├────────────►│ │ │ │
+│ │ Process Request │ │
+│ ├───────────►│ │ │
+│ │ │ [Service Error] │
+│ │ ├──────────────►│ │
+│ │ │ Log Error │ │
+│ │ ├─────────────────────────────►│
+│ │ │ Error Logged │ │
+│ │ ◄─────────────────────────────┤
+│ │ │ Error Response│ │
+│ │ ◄──────────────┤ │
+│ │ Service Error │ │
+│ ◄───────────┤ │ │
+│ Show Error Message │ │ │
+◄────────────┤ │ │ │
+│ │ │ │ │
+
+```
     │ Submit Generation Request │               │               │
     ├────────────►│            │               │               │
     │             │ POST /api/generate         │               │

@@ -195,7 +195,6 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 │ - Uses: AdaptiveContentBanner │
 │ - Uses: RadioGroup, Input, Label, Button │
 └─────────────────────────────────────────────────┘
-│
 │ composition
 ▼
 ┌─────────────────────────────────────────────────┐
@@ -215,7 +214,6 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 │ - Uses: Info Icons │
 │ - Uses: Tooltip │
 └─────────────────────────────────────────────────┘
-│
 │ sibling
 ▼
 ┌─────────────────────────────────────────────────┐
@@ -258,7 +256,6 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 ├─────────────────────────────────────────────────┤
 │ - Uses: useState, useEffect │
 └─────────────────────────────────────────────────┘
-│
 │ sibling
 ▼
 ┌─────────────────────────────────────────────────┐
@@ -276,7 +273,6 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 │ - Uses: Progress component │
 │ - Uses: Loader2 Icon │
 └─────────────────────────────────────────────────┘
-│
 │ sibling
 ▼
 ┌─────────────────────────────────────────────────┐
@@ -318,59 +314,69 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 
 ```
 
-### Template System Components
+### Template Interface Components
 
 ```
+┌─────────────────────────────────────────────────┐
+│               <<Interface>>                     │
+│          TemplatePreviewCardProps               │
+├─────────────────────────────────────────────────┤
+│ + template: CoverLetterTemplate                 │
+│ + isSelected: boolean                           │
+│ + onSelect: () => void                          │
+└─────────────────────────────────────────────────┘
+                        │ implements
+                        ▼
+┌─────────────────────────────────────────────────┐
+│               <<React.FC>>                      │
+│           TemplatePreviewCard                   │
+├─────────────────────────────────────────────────┤
+│ + getTemplateIcon(): JSX.Element                │
+│ + getColorClasses(): string                     │
+│ + render(): JSX.Element                         │
+└─────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────┐
-│ <<Interface>> │
-│ TemplatePreviewCardProps │
-├─────────────────────────────────────┤
-│ + template: CoverLetterTemplate │
-│ + isSelected: boolean │
-│ + onSelect: () => void │
-└─────────────────────────────────────┘
-│
-│ implements
-▼
-┌─────────────────────────────────────┐
-│ <<React.FC>> │
-│ TemplatePreviewCard │
-├─────────────────────────────────────┤
-│ + getTemplateIcon(): JSX.Element │
-│ + getColorClasses(): string │
-│ + render(): JSX.Element │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│               <<Interface>>                     │
+│            TemplatePreviewProps                 │
+├─────────────────────────────────────────────────┤
+│ + content: string                               │
+│ + template: string                              │
+└─────────────────────────────────────────────────┘
+                        │ implements
+                        ▼
+┌─────────────────────────────────────────────────┐
+│               <<React.FC>>                      │
+│             TemplatePreview                     │
+├─────────────────────────────────────────────────┤
+│ - isOpen: boolean                               │
+├─────────────────────────────────────────────────┤
+│ + getTemplateInfo(): TemplateInfo               │
+│ + formatDate(): string                          │
+│ + ProfessionalPreview(): JSX.Element            │
+│ + ModernPreview(): JSX.Element                  │
+│ + CreativePreview(): JSX.Element                │
+│ + render(): JSX.Element                         │
+└─────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────┐
-│ <<Interface>> │
-│ TemplatePreviewProps │
-├─────────────────────────────────────┤
-│ + content: string │
-│ + template: string │
-└─────────────────────────────────────┘
-│
-│ implements
-▼
-┌─────────────────────────────────────┐
-│ <<React.FC>> │
-│ TemplatePreview │
-├─────────────────────────────────────┤
-│ - isOpen: boolean │
-├─────────────────────────────────────┤
-│ + getTemplateInfo(): TemplateInfo │
-│ + formatDate(): string │
-│ + ProfessionalPreview(): JSX.Element│
-│ + ModernPreview(): JSX.Element │
-│ + CreativePreview(): JSX.Element │
-│ + render(): JSX.Element │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│               <<Interface>>                     │
+│           TemplateComparisonProps               │
+├─────────────────────────────────────────────────┤
+│ + content: string                               │
+│ + currentTemplate: string                       │
+└─────────────────────────────────────────────────┘
+                        │ implements
+                        ▼
+┌─────────────────────────────────────────────────┐
+│               <<React.FC>>                      │
+│            TemplateComparison                   │
+├─────────────────────────────────────────────────┤
+│ + renderTemplatePreview(): JSX.Element          │
+│ + render(): JSX.Element                         │
+└─────────────────────────────────────────────────┘
+```
 
-┌─────────────────────────────────────┐
-│ <<Interface>> │
-│ TemplateComparisonProps │
-├─────────────────────────────────────┤
-│ + content: string │
 │ + currentTemplate: string │
 └─────────────────────────────────────┘
 │
@@ -823,21 +829,26 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 
 ```
 
-HomePage
-├── TemplateSelection
-│ └── TemplatePreviewCard
-│ └── TemplatePreview
-└── GeneratePage
-└── CoverLetterForm
-├── InputQualityIndicator
-├── AdaptiveContentBanner
-├── ProgressIndicator
-├── StreamingText
+Application
+├── HomePage
+│ ├── TemplateSelection
+│ │ └── TemplatePreviewCard
+│ └── TemplatePreview (Modal)
+│
+├── GeneratePage
+│ └── CoverLetterForm
+│ ├── InputQualityIndicator
+│ ├── AdaptiveContentBanner
+│ ├── ProgressIndicator
+│ ├── StreamingText
+│ └── DownloadButton
+│
+└── ResultPage
+├── TemplatePreview
+├── TemplateComparison
 └── DownloadButton
 
-ResultPage
-├── TemplatePreview
-└── DownloadButton
+```
 
 ```
 
