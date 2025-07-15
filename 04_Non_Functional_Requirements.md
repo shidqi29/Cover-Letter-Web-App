@@ -8,23 +8,22 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 
 ### Response Time Requirements
 
-| Operation                    | Target Response Time | Maximum Acceptable | Notes                              |
-| ---------------------------- | -------------------- | ------------------ | ---------------------------------- |
-| Homepage Load                | < 1 second           | < 3 seconds        | Template cards with previews       |
-| Template Selection           | < 0.5 seconds        | < 2 seconds        | Instant visual feedback            |
-| Template Preview Display     | < 1 second           | < 3 seconds        | Modal with formatted preview       |
-| Generation Form Load         | < 1.5 seconds        | < 4 seconds        | With selected template info        |
-| File Upload & Preview        | < 2 seconds          | < 8 seconds        | Includes quality assessment        |
-| Real-time URL Validation     | < 1 second           | < 3 seconds        | With job source detection          |
-| Input Quality Assessment     | < 1.5 seconds        | < 4 seconds        | Visual indicators and tooltips     |
-| Image Text Extraction (OCR)  | < 15 seconds         | < 45 seconds       | OpenAI Vision API processing       |
-| URL Content Extraction       | < 8 seconds          | < 20 seconds       | OpenAI web search capabilities     |
-| CV Text Extraction           | < 3 seconds          | < 10 seconds       | PDF/DOCX parsing                   |
-| Cover Letter Generation      | < 20 seconds         | < 60 seconds       | AI generation with streaming       |
-| Real-time Content Streaming  | < 1 second           | < 3 seconds        | Progressive text display           |
-| Template Switching           | < 2 seconds          | < 6 seconds        | Content-preserving template change |
-| Document Download (PDF/DOCX) | < 4 seconds          | < 12 seconds       | Template-specific formatting       |
-| Copy to Clipboard            | < 0.5 seconds        | < 2 seconds        | Instant feedback                   |
+| Operation                    | Target Response Time | Maximum Acceptable | Notes                          |
+| ---------------------------- | -------------------- | ------------------ | ------------------------------ |
+| Homepage Load                | < 1 second           | < 3 seconds        | Template cards with previews   |
+| Template Selection           | < 0.5 seconds        | < 2 seconds        | Instant visual feedback        |
+| Template Preview Display     | < 1 second           | < 3 seconds        | Modal with formatted preview   |
+| Generation Form Load         | < 1.5 seconds        | < 4 seconds        | With selected template info    |
+| File Upload & Preview        | < 2 seconds          | < 8 seconds        | Includes quality assessment    |
+| Real-time URL Validation     | < 1 second           | < 3 seconds        | With job source detection      |
+| Input Quality Assessment     | < 1.5 seconds        | < 4 seconds        | Visual indicators and tooltips |
+| Image Text Extraction (OCR)  | < 15 seconds         | < 45 seconds       | OpenAI Vision API processing   |
+| URL Content Extraction       | < 8 seconds          | < 20 seconds       | OpenAI web search capabilities |
+| CV Text Extraction           | < 3 seconds          | < 10 seconds       | PDF/DOCX parsing               |
+| Cover Letter Generation      | < 20 seconds         | < 60 seconds       | AI generation with streaming   |
+| Real-time Content Streaming  | < 1 second           | < 3 seconds        | Progressive text display       |
+| Document Download (PDF/DOCX) | < 4 seconds          | < 12 seconds       | Template-specific formatting   |
+| Copy to Clipboard            | < 0.5 seconds        | < 2 seconds        | Instant feedback               |
 
 ### Throughput Requirements
 
@@ -66,7 +65,6 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 - **Quality Feedback**: Clear visual indicators (Good/Fair/Poor) with explanatory tooltips
 - **Error Recovery**: Actionable error messages with retry mechanisms
 - **Progress Transparency**: Real-time progress indicators for all long operations
-- **Content Preservation**: Template switching maintains all original content
 - **Adaptive Guidance**: Quality-based tips and recommendations
 
 ### Input Validation & Quality Assessment
@@ -91,7 +89,6 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 - **Data Transmission**: TLS 1.3 encryption for all client-server communication
 - **API Security**: Secure OpenAI API key management with environment isolation
 - **Input Sanitization**: Comprehensive validation and sanitization of all user inputs
-- **Content Integrity**: Cryptographic verification of template switching operations
 
 ### Privacy Requirements
 
@@ -137,7 +134,6 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 - **Content Accuracy**: Validate extracted text quality
 - **Template Consistency**: Ensure template formatting maintains content integrity
 - **Quality Assessment Accuracy**: Reliable input quality evaluation and feedback
-- **Content Preservation**: Guarantee unchanged content during template switching operations
 
 ## Scalability Requirements
 
@@ -158,7 +154,6 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 ### Data Integrity
 
 - **Template Consistency**: Ensure template formatting integrity across all operations
-- **Content Preservation**: Guarantee content accuracy during template switching
 - **Quality Assessment Accuracy**: 95% accuracy in input quality evaluation
 - **Generation Consistency**: Reproducible results for identical inputs
 
@@ -273,7 +268,6 @@ This document outlines the non-functional requirements for the Cover Letter Web 
 | --------------------- | -------- | ------------------------ | -------------------------------- | -------------- |
 | Performance           | High     | Generation Response Time | < 20s for complete cover letter  | ✅ Implemented |
 | Usability             | High     | User Success Rate        | > 95% successful generations     | ✅ Implemented |
-| Template System       | High     | Template Switch Time     | < 2s content-preserving change   | ✅ Implemented |
 | Quality Assessment    | High     | Assessment Accuracy      | > 95% correct quality indicators | ✅ Implemented |
 | Real-time Feedback    | High     | Streaming Latency        | < 1s for content streaming       | ✅ Implemented |
 | Security              | High     | Vulnerability Assessment | Zero critical vulnerabilities    | ✅ Implemented |

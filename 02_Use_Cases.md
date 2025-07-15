@@ -25,15 +25,14 @@ This document contains detailed use case specifications for the Cover Letter Web
 2. UC2: Preview Template Styles
 3. UC3: Generate Cover Letter from Job Poster Image
 4. UC4: Generate Cover Letter from Job URL
-5. UC5: Switch Template on Result Page
-6. UC6: Download Generated Cover Letter
-7. UC7: Assess Input Quality
+5. UC5: Download Generated Cover Letter
+6. UC6: Assess Input Quality
 
 ### Secondary Use Cases
 
-8. UC8: Validate Job Link
-9. UC9: Stream Generation Progress
-10. UC10: Handle Generation Errors
+7. UC7: Validate Job Link
+8. UC8: Stream Generation Progress
+9. UC9: Handle Generation Errors
 
 ## Detailed Use Cases
 
@@ -199,48 +198,8 @@ This document contains detailed use case specifications for the Cover Letter Web
 
 - Cover letter is generated and displayed
 - User can download in multiple formats
-- Generated content is ready for template switching
 
-### UC5: Switch Template on Result Page
-
-**Actor:** Job Seeker  
-**Description:** User changes to a different template while preserving the existing cover letter content on the result page.
-
-**Preconditions:**
-
-- Cover letter has been successfully generated
-- User is viewing the generated cover letter result page
-- Multiple templates are available
-- Template switching functionality is enabled
-
-**Main Flow:**
-
-1. User clicks "Switch Template" or template switcher button on result page
-2. System opens template switching dialog/modal
-3. System displays available alternative templates with previews
-4. System shows current template selection
-5. User reviews different template styles and previews
-6. User selects new template from available options
-7. System preserves existing cover letter content
-8. System applies new template formatting to existing content
-9. System updates the display with new template styling and layout
-10. System shows success notification or feedback
-11. User can continue with other actions (download, further editing)
-
-**Alternative Flows:**
-
-- 6a. User cancels template switch: System closes dialog without making changes
-- 7a. Template switching fails: System displays error message and reverts to original template
-- 9a. Content doesn't fit new template: System adjusts formatting automatically
-
-**Postconditions:**
-
-- Cover letter content remains unchanged
-- New template styling and formatting is applied
-- Download options reflect new template style
-- User can perform additional actions with new template
-
-### UC6: Download Generated Cover Letter
+### UC5: Download Generated Cover Letter
 
 **Actor:** Job Seeker  
 **Description:** User downloads the generated cover letter in their preferred format with template-specific styling.
@@ -275,7 +234,7 @@ This document contains detailed use case specifications for the Cover Letter Web
 - File maintains template-specific professional formatting
 - User has local copy of generated cover letter
 
-### UC7: Assess Input Quality
+### UC6: Assess Input Quality
 
 **Actor:** Job Seeker  
 **Description:** System automatically evaluates the quality of uploaded job posting and CV files, providing visual feedback and recommendations.
@@ -311,7 +270,7 @@ This document contains detailed use case specifications for the Cover Letter Web
 - User has received quality improvement recommendations
 - System is prepared for adaptive generation based on quality assessment
 
-### UC8: Validate Job Link
+### UC7: Validate Job Link
 
 **Actor:** Job Seeker  
 **Description:** System validates job posting URLs in real-time and detects the job source platform.
@@ -344,7 +303,7 @@ This document contains detailed use case specifications for the Cover Letter Web
 - User understands which job platform was detected
 - Form submission is appropriately enabled/disabled
 
-### UC9: Stream Generation Progress
+### UC8: Stream Generation Progress
 
 **Actor:** Job Seeker  
 **Description:** System provides real-time feedback during cover letter generation process with streaming text and progress indicators.
@@ -378,7 +337,7 @@ This document contains detailed use case specifications for the Cover Letter Web
 - User understands generation was successful
 - Full cover letter content is displayed
 
-### UC10: Handle Generation Errors
+### UC9: Handle Generation Errors
 
 **Actor:** Job Seeker  
 **Description:** System gracefully handles various error conditions during cover letter generation and provides helpful feedback.
@@ -443,19 +402,18 @@ This document contains detailed use case specifications for the Cover Letter Web
 
 ### Primary Use Case Flow
 
-1. UC1 (Select Template) → UC3/UC4 (Generate from Image/URL) → UC5/UC6 (Switch Template/Download)
+1. UC1 (Select Template) → UC3/UC4 (Generate from Image/URL) → UC5 (Download)
 2. UC2 (Preview Templates) supports UC1 (Template Selection)
-3. UC7 (Quality Assessment) runs parallel to UC3/UC4 (Generation)
-4. UC8 (Link Validation) supports UC4 (URL Generation)
-5. UC9 (Progress Streaming) runs during UC3/UC4 (Generation)
-6. UC10 (Error Handling) supports all generation use cases
+3. UC6 (Quality Assessment) runs parallel to UC3/UC4 (Generation)
+4. UC7 (Link Validation) supports UC4 (URL Generation)
+5. UC8 (Progress Streaming) runs during UC3/UC4 (Generation)
+6. UC9 (Error Handling) supports all generation use cases
 
 ### Dependencies
 
 - UC1 must complete before UC3/UC4 can begin
-- UC7 and UC8 provide feedback during UC3/UC4
+- UC6 and UC7 provide feedback during UC3/UC4
 - UC5 requires successful completion of UC3/UC4
-- UC6 requires successful completion of UC3/UC4 or UC5
 
 ### Quality Attributes
 

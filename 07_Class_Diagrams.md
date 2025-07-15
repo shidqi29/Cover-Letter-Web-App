@@ -26,7 +26,7 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 - **Service Layer Pattern**: API routes and utility services
 - **Observer Pattern**: React state management and real-time streaming
 - **Factory Pattern**: Document generation with template-specific formatting
-- **Strategy Pattern**: Template switching and quality assessment
+- **Strategy Pattern**: Quality assessment and content generation
 
 **Key Technologies:**
 
@@ -93,7 +93,6 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 │ + handleDownload(): void                        │
 │ + render(): JSX.Element                         │
 ├─────────────────────────────────────────────────┤
-│ - Uses: TemplateSwitcher                        │
 │ - Uses: DownloadButton                          │
 │ - Uses: TemplatePreview                         │
 └─────────────────────────────────────────────────┘
@@ -157,167 +156,149 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 │ - Uses: Dialog, DialogContent, DialogHeader     │
 │ - Uses: Calendar, Eye Icons                     │
 └─────────────────────────────────────────────────┘
-                        │
-                        │ related
-                        ▼
-┌─────────────────────────────────────────────────┐
-│               <<React.FC>>                      │
-│            TemplateSwitcher                     │
-├─────────────────────────────────────────────────┤
-│ - currentTemplate: string                       │
-│ - coverLetterContent: string                    │
-│ - isOpen: boolean                               │
-│ - isSwitching: boolean                          │
-├─────────────────────────────────────────────────┤
-│ + getTemplateInfo(id: string): TemplateInfo     │
-│ + handleTemplateSwitch(newTemplate: string): void│
-│ + generateNewContent(): Promise<void>           │
-│ + render(): JSX.Element                         │
-├─────────────────────────────────────────────────┤
-│ - Uses: Dialog, Button                          │
-│ - Uses: RefreshCw, ArrowRight Icons             │
-│ - Uses: useRouter, useSearchParams              │
-└─────────────────────────────────────────────────┘
-```
 
 ### Form and Input Components
 
 ```
+
 ┌─────────────────────────────────────────────────┐
-│               <<React.FC>>                      │
-│            CoverLetterForm                      │
+│ <<React.FC>> │
+│ CoverLetterForm │
 ├─────────────────────────────────────────────────┤
-│ - selectedTemplate: string | null               │
-│ - jobPosterPreview: string | null               │
-│ - cvPreview: string | null                      │
-│ - coverLetter: string | null                    │
-│ - loading: boolean                              │
-│ - error: string | null                          │
-│ - jobInputType: "image" | "link"                │
-│ - jobLink: string                               │
-│ - jobSource: string                             │
-│ - isValidLink: boolean | null                   │
-│ - linkValidating: boolean                       │
-│ - jobInputQuality: InputQualityStatus           │
-│ - cvInputQuality: InputQualityStatus            │
-│ - isRelatedInputs: boolean | null               │
+│ - selectedTemplate: string | null │
+│ - jobPosterPreview: string | null │
+│ - cvPreview: string | null │
+│ - coverLetter: string | null │
+│ - loading: boolean │
+│ - error: string | null │
+│ - jobInputType: "image" | "link" │
+│ - jobLink: string │
+│ - jobSource: string │
+│ - isValidLink: boolean | null │
+│ - linkValidating: boolean │
+│ - jobInputQuality: InputQualityStatus │
+│ - cvInputQuality: InputQualityStatus │
+│ - isRelatedInputs: boolean | null │
 ├─────────────────────────────────────────────────┤
-│ + handleSubmit(e: FormEvent): Promise<void>     │
-│ + handleJobPosterChange(e: ChangeEvent): void   │
-│ + handleCvChange(e: ChangeEvent): void          │
-│ + handleJobLinkChange(e: ChangeEvent): void     │
-│ + handleValidateJobLink(url: string): void      │
-│ + checkInputQualityBeforeSubmit(): boolean      │
-│ + render(): JSX.Element                         │
+│ + handleSubmit(e: FormEvent): Promise<void> │
+│ + handleJobPosterChange(e: ChangeEvent): void │
+│ + handleCvChange(e: ChangeEvent): void │
+│ + handleJobLinkChange(e: ChangeEvent): void │
+│ + handleValidateJobLink(url: string): void │
+│ + checkInputQualityBeforeSubmit(): boolean │
+│ + render(): JSX.Element │
 ├─────────────────────────────────────────────────┤
-│ - Uses: StreamingText                           │
-│ - Uses: ProgressIndicator                       │
-│ - Uses: DownloadButton                          │
-│ - Uses: InputQualityIndicator                   │
-│ - Uses: AdaptiveContentBanner                   │
-│ - Uses: RadioGroup, Input, Label, Button        │
+│ - Uses: StreamingText │
+│ - Uses: ProgressIndicator │
+│ - Uses: DownloadButton │
+│ - Uses: InputQualityIndicator │
+│ - Uses: AdaptiveContentBanner │
+│ - Uses: RadioGroup, Input, Label, Button │
 └─────────────────────────────────────────────────┘
-                        │
-                        │ composition
-                        ▼
+│
+│ composition
+▼
 ┌─────────────────────────────────────────────────┐
-│               <<React.FC>>                      │
-│          InputQualityIndicator                  │
+│ <<React.FC>> │
+│ InputQualityIndicator │
 ├─────────────────────────────────────────────────┤
-│ - quality: InputQualityStatus                   │
-│ - label: string                                 │
-│ - showTooltip: boolean                          │
+│ - quality: InputQualityStatus │
+│ - label: string │
+│ - showTooltip: boolean │
 ├─────────────────────────────────────────────────┤
-│ + getQualityIcon(): IconComponent               │
-│ + getQualityColor(): string                     │
-│ + getQualityMessage(): string                   │
-│ + render(): JSX.Element                         │
+│ + getQualityIcon(): IconComponent │
+│ + getQualityColor(): string │
+│ + getQualityMessage(): string │
+│ + render(): JSX.Element │
 ├─────────────────────────────────────────────────┤
 │ - Uses: CheckCircle, AlertTriangle, AlertCircle │
-│ - Uses: Info Icons                              │
-│ - Uses: Tooltip                                 │
+│ - Uses: Info Icons │
+│ - Uses: Tooltip │
 └─────────────────────────────────────────────────┘
-                        │
-                        │ sibling
-                        ▼
+│
+│ sibling
+▼
 ┌─────────────────────────────────────────────────┐
-│               <<React.FC>>                      │
-│         AdaptiveContentBanner                   │
+│ <<React.FC>> │
+│ AdaptiveContentBanner │
 ├─────────────────────────────────────────────────┤
-│ - hasLimitedJobInfo: boolean                    │
-│ - hasLimitedCvInfo: boolean                     │
-│ - isJobInfoRelevant: boolean                    │
-│ - jobInputQuality: InputQualityStatus           │
-│ - cvInputQuality: InputQualityStatus            │
+│ - hasLimitedJobInfo: boolean │
+│ - hasLimitedCvInfo: boolean │
+│ - isJobInfoRelevant: boolean │
+│ - jobInputQuality: InputQualityStatus │
+│ - cvInputQuality: InputQualityStatus │
 ├─────────────────────────────────────────────────┤
-│ + shouldShowBanner(): boolean                   │
-│ + getBannerMessage(): string                    │
-│ + getBannerVariant(): string                    │
-│ + render(): JSX.Element                         │
+│ + shouldShowBanner(): boolean │
+│ + getBannerMessage(): string │
+│ + getBannerVariant(): string │
+│ + render(): JSX.Element │
 ├─────────────────────────────────────────────────┤
-│ - Uses: Alert, AlertDescription                 │
-│ - Uses: Info, AlertTriangle Icons               │
+│ - Uses: Alert, AlertDescription │
+│ - Uses: Info, AlertTriangle Icons │
 └─────────────────────────────────────────────────┘
+
 ```
 
 ### Display and Interaction Components
 
 ```
+
 ┌─────────────────────────────────────────────────┐
-│               <<React.FC>>                      │
-│             StreamingText                       │
+│ <<React.FC>> │
+│ StreamingText │
 ├─────────────────────────────────────────────────┤
-│ - text: string                                  │
-│ - isStreaming: boolean                          │
-│ - speed: number                                 │
-│ - onComplete: () => void                        │
+│ - text: string │
+│ - isStreaming: boolean │
+│ - speed: number │
+│ - onComplete: () => void │
 ├─────────────────────────────────────────────────┤
-│ + useEffect(): void                             │
-│ + startStreaming(): void                        │
-│ + render(): JSX.Element                         │
+│ + useEffect(): void │
+│ + startStreaming(): void │
+│ + render(): JSX.Element │
 ├─────────────────────────────────────────────────┤
-│ - Uses: useState, useEffect                     │
+│ - Uses: useState, useEffect │
 └─────────────────────────────────────────────────┘
-                        │
-                        │ sibling
-                        ▼
+│
+│ sibling
+▼
 ┌─────────────────────────────────────────────────┐
-│               <<React.FC>>                      │
-│           ProgressIndicator                     │
+│ <<React.FC>> │
+│ ProgressIndicator │
 ├─────────────────────────────────────────────────┤
-│ - stage: GenerationStage                        │
-│ - progress: number                              │
-│ - message: string                               │
+│ - stage: GenerationStage │
+│ - progress: number │
+│ - message: string │
 ├─────────────────────────────────────────────────┤
 │ + getStageMessage(stage: GenerationStage): string│
-│ + getProgressPercentage(): number               │
-│ + render(): JSX.Element                         │
+│ + getProgressPercentage(): number │
+│ + render(): JSX.Element │
 ├─────────────────────────────────────────────────┤
-│ - Uses: Progress component                      │
-│ - Uses: Loader2 Icon                            │
+│ - Uses: Progress component │
+│ - Uses: Loader2 Icon │
 └─────────────────────────────────────────────────┘
-                        │
-                        │ sibling
-                        ▼
+│
+│ sibling
+▼
 ┌─────────────────────────────────────────────────┐
-│               <<React.FC>>                      │
-│            DownloadButton                       │
+│ <<React.FC>> │
+│ DownloadButton │
 ├─────────────────────────────────────────────────┤
-│ - content: string                               │
-│ - template: string                              │
-│ - filename: string                              │
-│ - isGenerating: boolean                         │
+│ - content: string │
+│ - template: string │
+│ - filename: string │
+│ - isGenerating: boolean │
 ├─────────────────────────────────────────────────┤
-│ + generatePDF(): void                           │
-│ + generateDOCX(): void                          │
-│ + getTemplateStyles(): TemplateStyles           │
-│ + generateSmartFilename(): string               │
-│ + render(): JSX.Element                         │
+│ + generatePDF(): void │
+│ + generateDOCX(): void │
+│ + getTemplateStyles(): TemplateStyles │
+│ + generateSmartFilename(): string │
+│ + render(): JSX.Element │
 ├─────────────────────────────────────────────────┤
-│ - Uses: jsPDF, docx libraries                   │
-│ - Uses: Download Icon                           │
-│ - Uses: Button, DropdownMenu                    │
+│ - Uses: jsPDF, docx libraries │
+│ - Uses: Download Icon │
+│ - Uses: Button, DropdownMenu │
 └─────────────────────────────────────────────────┘
+
 ```
 
 ├─────────────────────────────────────┤
@@ -330,7 +311,6 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 │ + handleBackToHome(): void │
 │ + render(): JSX.Element │
 ├─────────────────────────────────────┤
-│ - Uses: TemplateSwitcher │
 │ - Uses: TemplatePreview │
 │ - Uses: TemplateComparison │
 │ - Uses: DownloadButton │
@@ -384,31 +364,6 @@ The Cover Letter Web App follows a modern React-TypeScript architecture with com
 │ + ModernPreview(): JSX.Element │
 │ + CreativePreview(): JSX.Element │
 │ + render(): JSX.Element │
-└─────────────────────────────────────┘
-
-┌─────────────────────────────────────┐
-│ <<Interface>> │
-│ TemplateSwitcherProps │
-├─────────────────────────────────────┤
-│ + currentTemplate: string │
-│ + coverLetterContent: string │
-└─────────────────────────────────────┘
-│
-│ implements
-▼
-┌─────────────────────────────────────┐
-│ <<React.FC>> │
-│ TemplateSwitcher │
-├─────────────────────────────────────┤
-│ - isOpen: boolean │
-│ - isSwitching: boolean │
-├─────────────────────────────────────┤
-│ + getTemplateInfo(): TemplateInfo │
-│ + handleTemplateSwitch(): void │
-│ + render(): JSX.Element │
-├─────────────────────────────────────┤
-│ - Uses: Router │
-│ - Uses: Toast │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -881,7 +836,6 @@ HomePage
 └── DownloadButton
 
 ResultPage
-├── TemplateSwitcher
 ├── TemplatePreview
 └── DownloadButton
 
@@ -918,21 +872,25 @@ CoverLetterTemplate → FormData → QualityAssessment → APICall → Streaming
 ## Key Design Decisions
 
 ### Component Design
+
 - **Functional Components**: All components use React hooks for state management
 - **Composition Pattern**: Complex components built from smaller, reusable pieces
 - **Props Interface**: Type-safe component interfaces with TypeScript
 
 ### State Management
+
 - **Local State**: useState for component-specific state
 - **URL State**: Next.js router for template selection persistence
 - **Global State**: Minimal global state, prefer prop drilling for simplicity
 
 ### Service Architecture
+
 - **Utility Classes**: Pure functions for data processing and validation
 - **API Routes**: Next.js API routes for server-side processing
 - **External Services**: Abstracted interfaces for third-party integrations
 
 ### Error Handling
+
 - **Graceful Degradation**: Components handle missing data gracefully
 - **Error Boundaries**: React error boundaries for component-level error handling
 - **Validation Layers**: Multiple validation layers (client-side, API, external service)
@@ -941,4 +899,7 @@ CoverLetterTemplate → FormData → QualityAssessment → APICall → Streaming
 
 _Document prepared for thesis project using RUP (Rational Unified Process) methodology_
 _Last Updated: July 15, 2025 - Reflects current implementation with complete template system, quality assessment, and streaming capabilities_
+
+```
+
 ```

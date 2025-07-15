@@ -87,44 +87,7 @@ Job Seeker    Homepage    Template     Generation    Quality        API         
     │            │           │           │              │             │             │             │
 ```
 
-### 2. Template Switching with Content Preservation
-
-```
-Job Seeker    Result Page    Template        Template       Content         Router
-                            Switcher        Engine         State
-    │             │            │               │             │               │
-    │ View Generated Result    │               │             │               │
-    ├────────────►│            │               │             │               │
-    │             │ Display Cover Letter      │             │               │
-    │             ├───────────►│               │             │               │
-    │             │ Show Template Style       │             │               │
-    │             ◄───────────┤               │             │               │
-    │ Click Switch Template    │               │             │               │
-    ├────────────►│            │               │             │               │
-    │             │ Open Template Switcher Dialog          │               │
-    │             ├───────────►│               │             │               │
-    │             │ Show Available Templates  │             │               │
-    │             ◄───────────┤               │             │               │
-    │ Select New Template      │               │             │               │
-    ├────────────►│            │               │             │               │
-    │             │ Preserve Current Content  │             │               │
-    │             ├───────────────────────────►│             │               │
-    │             │ Content Stored            │             │               │
-    │             ◄───────────────────────────┤             │               │
-    │             │ Apply New Template        │             │               │
-    │             ├─────────────────────────►│             │               │
-    │             │ Template Formatting Applied            │               │
-    │             ◄─────────────────────────┤             │               │
-    │             │ Update URL with New Template ID        │               │
-    │             ├─────────────────────────────────────────►│
-    │             │ URL Updated               │             │               │
-    │             ◄─────────────────────────────────────────┤
-    │ Show Updated Cover Letter│               │             │               │
-    ◄────────────┤            │               │             │               │
-    │             │            │               │             │               │
-```
-
-### 3. Real-time Input Quality Assessment
+### 2. Real-time Input Quality Assessment
 
 ```
 Job Seeker    Form           Quality         Document        Link
@@ -158,7 +121,7 @@ Job Seeker    Form           Quality         Document        Link
     │             │            │               │               │
 ```
 
-### 4. Document Download with Template Formatting
+### 3. Document Download with Template Formatting
 
 ```
 Job Seeker    Result Page    Download        Document        File
@@ -191,7 +154,7 @@ Job Seeker    Result Page    Download        Document        File
     │             │            │               │               │
 ```
 
-### 5. Error Handling and Recovery Flow
+### 4. Error Handling and Recovery Flow
 
 ```
 Job Seeker    Form           API            Error          Recovery
@@ -381,7 +344,7 @@ System File Processor Quality Assessor Visual Indicator Adaptive Banner Mode Sel
 
 ```
 
-### 5. Error Handling Sequence
+### 6. Error Handling Sequence
 
 ```
 
@@ -406,7 +369,7 @@ Job Seeker UI Component API Route Error Handler Notification
 
 ```
 
-### 6. URL Job Link Processing Flow
+### 7. URL Job Link Processing Flow
 
 ```
 
@@ -444,7 +407,7 @@ Component Validator Web Search Processor
 
 ## Secondary Sequence Diagrams
 
-### 7. Template Preview Modal Flow
+### 8. Template Preview Modal Flow
 
 ```
 
@@ -476,7 +439,7 @@ Selection Modal Engine
 
 ```
 
-### 8. Streaming Text Display Flow
+### 9. Streaming Text Display Flow
 
 ```
 
@@ -521,7 +484,7 @@ Component Route API
 
 ## System Integration Sequence
 
-### 9. Complete End-to-End Flow
+### 10. Complete End-to-End Flow
 
 ```
 
@@ -568,7 +531,6 @@ Job Seeker Frontend Backend OpenAI File System Browser
 ### Asynchronous Operations
 - **Streaming Generation**: Real-time text display during AI processing
 - **File Processing**: Background quality assessment and content extraction
-- **Template Switching**: Non-blocking template changes with content preservation
 
 ### Error Handling Patterns
 - **Graceful Degradation**: Continue with reduced functionality during service failures

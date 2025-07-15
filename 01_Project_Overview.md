@@ -16,7 +16,6 @@ The Cover Letter Web Application is an AI-powered web application that automates
 
 - **Visual Template Selection**: Three professionally designed templates (Professional, Modern, Creative) with distinct styling and layouts
 - **Interactive Template Previews**: Real-time visual previews showing exact formatting and design before generation
-- **Template Switching**: Dynamic template changing on result page while preserving generated content
 - **Responsive Design**: Fully optimized for mobile, tablet, and desktop devices
 
 #### Input Processing & AI Integration
@@ -42,7 +41,6 @@ The Cover Letter Web Application is an AI-powered web application that automates
 - **Link Validation**: Real-time validation of job posting URLs with source detection
 - **Progress Tracking**: Multi-stage progress indicators during generation process
 - **Error Handling**: Comprehensive error management with user-friendly feedback
-- **Content Preservation**: Maintains generated content during template switches
 
 ### Technology Stack
 
