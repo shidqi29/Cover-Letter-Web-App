@@ -45,13 +45,17 @@ Job Seeker    Homepage      Template      Generation    Quality       API       
     │            │             │ Load Form with Template  │             │             │             │
     │            │             ◄───────────┤              │             │             │             │
     │            │             │             │              │             │             │             │
-    │ Upload Job Image         │             │              │             │             │             │
+    │ Upload Job Image OR Enter Job URL       │              │             │             │             │
     ├─────────────────────────────────────►│              │             │             │             │
-    │            │             │ Validate & Assess Quality│             │             │             │
+    │            │             │ [IMAGE PATH] Validate & Assess Image Quality        │             │
     │            │             ├───────────►│              │             │             │             │
-    │            │             │ Quality Indicator (Good/Fair/Poor)    │             │             │
+    │            │             │ Image Quality Indicator (Good/Fair/Poor)            │             │
     │            │             ◄───────────┤              │             │             │             │
-    │ Show Quality Status      │             │              │             │             │             │
+    │            │             │ [URL PATH] Validate URL Format & Source             │             │
+    │            │             ├───────────────────────────────────────►│             │             │
+    │            │             │ URL Validation Status & Job Source      │             │             │
+    │            │             ◄───────────────────────────────────────┤             │             │
+    │ Show Job Input Quality Status         │              │             │             │             │
     ◄─────────────────────────────────────┤              │             │             │             │
     │            │             │             │              │             │             │             │
     │ Upload CV File           │             │              │             │             │             │
@@ -67,7 +71,9 @@ Job Seeker    Homepage      Template      Generation    Quality       API       
     ├─────────────────────────────────────►│              │             │             │             │
     │            │             │ Submit Generation Request │             │             │             │
     │            │             ├─────────────────────────►│             │             │             │
-    │            │             │             │ Extract Job Info from Image           │             │
+    │            │             │             │ [IMAGE] Extract Job Info from Image      │             │
+    │            │             │             ├─────────────────────────────────────►│             │
+    │            │             │             │ [URL] Extract Job Info from URL         │             │
     │            │             │             ├─────────────────────────────────────►│             │
     │            │             │             │ Job Information Extracted             │             │
     │            │             │             ◄─────────────────────────────────────┤             │
