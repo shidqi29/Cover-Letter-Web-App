@@ -704,7 +704,7 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
                 ? "Membuat..."
                 : !selectedTemplate
                   ? "Pilih Template Terlebih Dahulu"
-                  : "Buat Surat Lamaran"}
+                  : "Buat Cover Letter"}
             </Button>
           </div>
           <ProgressIndicator loading={loading} />
