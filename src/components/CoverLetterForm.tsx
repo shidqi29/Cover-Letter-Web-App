@@ -558,7 +558,7 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
                   informasi yang relevan dari gambar tersebut.
                 </p>
                 {jobPosterPreview && (
-                  <div className="mt-2 overflow-hidden rounded border">
+                  <div className="mt-2 h-64 overflow-scroll rounded border">
                     {" "}
                     <Image
                       src={jobPosterPreview}
