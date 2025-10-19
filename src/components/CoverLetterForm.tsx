@@ -6,6 +6,14 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 import StreamingText from "./StreamingText";
 import ProgressIndicator from "./ProgressIndicator";
 import DownloadButton from "./DownloadButton";
@@ -52,6 +60,8 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
   const [cvInputQuality, setCvInputQuality] =
     useState<InputQualityStatus>("unknown");
   const [isRelatedInputs, setIsRelatedInputs] = useState<boolean | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [pendingSubmit, setPendingSubmit] = useState<boolean>(false);
 
   // Validate job link when it changes
   useEffect(() => {
@@ -108,6 +118,20 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
   const [isJobInfoRelevant, setIsJobInfoRelevant] = useState<boolean>(true);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if we have limited input quality
+    const hasLimitedInputQuality =
+      jobInputQuality === "limited" || cvInputQuality === "limited";
+
+    // If we have limited input and haven't confirmed yet, show the modal
+    if (hasLimitedInputQuality && !pendingSubmit) {
+      setShowConfirmModal(true);
+      return;
+    }
+
+    // Reset pending submit flag
+    setPendingSubmit(false);
+
     setLoading(true);
     setError(null);
     setCoverLetter(""); // Reset cover letter before starting stream
@@ -459,6 +483,24 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
     }
   }; // Using imported getQualityTooltipMessage from document-utils.ts
 
+  // Handle confirmation modal actions
+  const handleConfirmContinue = () => {
+    setShowConfirmModal(false);
+    setPendingSubmit(true);
+    // Trigger form submission programmatically
+    const form = document.querySelector("form");
+    if (form) {
+      form.dispatchEvent(
+        new Event("submit", { cancelable: true, bubbles: true }),
+      );
+    }
+  };
+
+  const handleCancelSubmit = () => {
+    setShowConfirmModal(false);
+    setPendingSubmit(false);
+  };
+
   return (
     <Card className="mx-auto w-full max-w-4xl p-3 shadow-lg sm:p-4 lg:p-6">
       {/* <CardHeader>
@@ -775,6 +817,82 @@ const CoverLetterForm: React.FC<CoverLetterFormProps> = ({
           </div>
         </div>
       </CardContent>
+
+      {/* Confirmation Modal for Limited Input Quality */}
+      <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              Informasi Input Terbatas
+            </DialogTitle>
+            <DialogDescription className="pt-2 text-left">
+              Kami mendeteksi bahwa informasi yang Anda berikan mungkin
+              terbatas:
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-4">
+            {jobInputQuality === "limited" && (
+              <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <Info className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600" />
+                <div>
+                  <p className="font-medium text-amber-900">
+                    Informasi Pekerjaan Terbatas
+                  </p>
+                  <p className="mt-1 text-sm text-amber-700">
+                    {jobInputType === "image"
+                      ? "Gambar lowongan mungkin kurang jelas atau memiliki detail terbatas."
+                      : "Link pekerjaan mungkin tidak mengandung informasi lengkap."}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {cvInputQuality === "limited" && (
+              <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <Info className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600" />
+                <div>
+                  <p className="font-medium text-amber-900">
+                    Informasi CV Terbatas
+                  </p>
+                  <p className="mt-1 text-sm text-amber-700">
+                    CV/Resume Anda mungkin tidak berisi informasi yang cukup
+                    detail.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+              <p className="text-sm text-blue-900">
+                <strong>Kami tetap dapat membuat surat lamaran</strong>, namun
+                kualitasnya mungkin tidak optimal. Surat lamaran akan
+                disesuaikan dengan informasi yang tersedia dan menggunakan
+                konten yang lebih umum untuk bagian yang kurang jelas.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancelSubmit}
+              className="w-full sm:w-auto"
+            >
+              Kembali & Perbaiki
+            </Button>
+            <Button
+              type="button"
+              onClick={handleConfirmContinue}
+              className="w-full sm:w-auto"
+            >
+              Lanjutkan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
